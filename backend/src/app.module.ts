@@ -37,9 +37,7 @@ export const ENTITIES_PATHS = [
         entities: ENTITIES_PATHS,
         namingStrategy: new SnakeNamingStrategy(),
         migrationsRun: true,
-        extra: {
-          connectionLimit: config.database.maxConnections,
-        },
+        extra: { connectionLimit: config.database.maxConnections },
         logging: ['error'],
       }),
       inject: [ConfigService],
