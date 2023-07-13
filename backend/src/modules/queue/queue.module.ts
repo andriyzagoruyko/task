@@ -3,6 +3,8 @@ import { ConfigService } from 'src/config/config.service';
 import { QueueService } from './queue.service';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { QueueController } from './queue.controller';
+import { ImageProcessingConsumer } from './consumers/image-processing.consumer';
+import { FileModule } from '../file/file.module';
 
 const RabbitMQFactory = (config: ConfigService) => {
   return {
@@ -14,12 +16,13 @@ const RabbitMQFactory = (config: ConfigService) => {
 
 @Module({
   imports: [
+    FileModule,
     RabbitMQModule.forRootAsync(RabbitMQModule, {
       useFactory: RabbitMQFactory,
       inject: [ConfigService],
     }),
   ],
-  providers: [QueueService],
+  providers: [QueueService, ImageProcessingConsumer],
   exports: [QueueService],
   controllers: [QueueController],
 })

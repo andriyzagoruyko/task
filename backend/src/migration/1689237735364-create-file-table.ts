@@ -1,3 +1,4 @@
+import { FileStatusEnum } from 'src/modules/file/enums/file-status.enum';
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
 export class CreateFileTable1689237735364 implements MigrationInterface {
@@ -34,7 +35,7 @@ export class CreateFileTable1689237735364 implements MigrationInterface {
           {
             name: 'size',
             type: 'float',
-            isNullable: false,
+            isNullable: true,
           },
           {
             name: 'text',
@@ -62,5 +63,7 @@ export class CreateFileTable1689237735364 implements MigrationInterface {
     );
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {}
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.dropTable('file');
+  }
 }

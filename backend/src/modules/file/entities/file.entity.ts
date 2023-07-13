@@ -18,16 +18,16 @@ export class FileEntity {
   @Column({ type: 'varchar', length: 30 })
   lang!: string;
 
-  @Column({ type: 'text' })
-  text!: string;
+  @Column({ type: 'text', nullable: true })
+  text!: string | null;
 
   @Column({ type: 'varchar', length: 255 })
-  url!: FileStatusEnum;
+  url!: string;
 
   @Column({ type: 'varchar', length: 255 })
   type!: FileTypeEnum;
 
-  @Column({ type: 'integer' })
+  @Column({ type: 'integer', nullable: true })
   size!: number;
 
   @CreateDateColumn({

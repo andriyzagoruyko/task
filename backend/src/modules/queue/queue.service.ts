@@ -3,7 +3,6 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { EnqueueFileDto } from './dto/enqueue-file.dto';
 import { ImageRoutesEnum } from './enums/image-routes.enum';
 import { RABBITMQ_IMAGE_TOPIC } from 'src/definitions';
-import { LoggerService } from '@nestjs/common';
 
 @Injectable()
 export class QueueService {
@@ -15,7 +14,7 @@ export class QueueService {
 
   enqueueFile(data: EnqueueFileDto) {
     const extension = this.getUrlExtension(data.fileUrl);
-    this.logger.log(`New event received ${data}`);
+    this.logger.log(`New event received ${JSON.stringify(data)}`);
 
     if (this.SUPPORTED_IMAGE_TYPES.includes(extension)) {
       return this.amqpConnection.publish<EnqueueFileDto>(
