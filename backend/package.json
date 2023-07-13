@@ -37,6 +37,7 @@
     "nestjs-joi": "^1.9.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
+    "tesseract.js": "^4.1.1",
     "typeorm": "^0.3.17",
     "typeorm-naming-strategies": "^4.1.0"
   },

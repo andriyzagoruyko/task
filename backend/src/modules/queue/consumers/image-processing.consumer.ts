@@ -1,20 +1,55 @@
 import { RabbitSubscribe } from '@golevelup/nestjs-rabbitmq';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { RABBITMQ_IMAGE_TOPIC } from 'src/definitions';
 import { ImageRoutesEnum } from '../enums/image-routes.enum';
 import { EnqueueFileDto } from '../dto/enqueue-file.dto';
 import { FileService } from 'src/modules/file/file.service';
 import { FileTypeEnum } from 'src/modules/file/enums/file-type.enum';
+import { FileStatusEnum } from 'src/modules/file/enums/file-status.enum';
+import { recognize } from 'tesseract.js';
 
 @Injectable()
 export class ImageProcessingConsumer {
+  logger = new Logger(ImageProcessingConsumer.name);
+
   constructor(private readonly fileService: FileService) {}
 
   @RabbitSubscribe({
     exchange: RABBITMQ_IMAGE_TOPIC,
     routingKey: ImageRoutesEnum.PROCESS,
   })
-  processImageEvent(data: EnqueueFileDto) {
-    const file = this.fileService.createFileEntity(data, FileTypeEnum.IMAGE);
+  async processImageEvent(data: EnqueueFileDto) {
+    const name = data.fileUrl.split('/').pop();
+    const file = await this.fileService.createFileEntity({
+      name,
+      type: FileTypeEnum.IMAGE,
+      lang: data.lang,
+      url: data.fileUrl,
+      status: FileStatusEnum.PROCESSING,
+    });
+
+    try {
+      this.logger.log(`Downloading file ${name}`);
+      const image = await this.fileService.downloadFile(data.fileUrl);
+      this.fileService.updateFileEntity(file.id, { size: image.length });
+
+      this.logger.log(`Recognizing text`);
+      const text = await this.recognizeImage(image, data.lang);
+      this.fileService.updateFileEntity(file.id, {
+        text,
+        status: FileStatusEnum.READY,
+      });
+      this.logger.log(`Text recognized successfully:\n${text}`);
+    } catch (e) {
+      this.logger.error(`Unexpected exception during processing image: ${e}`);
+    }
+  }
+
+  async recognizeImage(file: Buffer, lang: string) {
+    const res = await recognize(file, lang);
+    const {
+      data: { text },
+    } = res;
+    return text;
   }
 }

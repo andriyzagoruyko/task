@@ -1,28 +1,36 @@
-import { Injectable } from '@nestjs/common';
-import { EnqueueFileDto } from '../queue/dto/enqueue-file.dto';
+import { Injectable, Logger } from '@nestjs/common';
+import { DeepPartial } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileEntity } from './entities/file.entity';
 import { Repository } from 'typeorm';
-import { FileStatusEnum } from './enums/file-status.enum';
-import { FileTypeEnum } from './enums/file-type.enum';
+import { HttpService } from '@nestjs/axios';
+import { AxiosResponse } from 'axios';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class FileService {
   constructor(
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
+    private readonly httpService: HttpService,
   ) {}
 
-  createFileEntity(data: EnqueueFileDto, type: FileTypeEnum) {
-    return this.fileRepository.save({
-      url: data.fileUrl,
-      lang: data.lang,
-      status: FileStatusEnum.PROCESSING,
-      type,
-    });
+  createFileEntity(fileData: DeepPartial<FileEntity>) {
+    return this.fileRepository.save({ ...fileData });
   }
 
-  downloadFile(file:FileEntity) {
-    
+  updateFileEntity(id: number, fileData: DeepPartial<FileEntity>) {
+    return this.fileRepository.update(id, fileData);
+  }
+
+  async downloadFile(url: string) {
+    const source$ = this.httpService.get<Buffer>(url, {
+      responseType: 'arraybuffer',
+      maxContentLength: Infinity,
+      maxBodyLength: Infinity,
+    });
+
+    const res = await lastValueFrom<AxiosResponse<Buffer, any>>(source$);
+    return res.data;
   }
 }

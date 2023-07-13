@@ -15,6 +15,12 @@ export class CreateFileTable1689237735364 implements MigrationInterface {
             isPrimary: true,
           },
           {
+            name: 'name',
+            type: 'varchar',
+            length: '255',
+            isNullable: false,
+          },
+          {
             name: 'status',
             type: 'varchar',
             length: '255',
