@@ -18,24 +18,26 @@ export class ImageProcessingConsumer {
     exchange: RABBITMQ_IMAGE_TOPIC,
     routingKey: ImageRoutesEnum.PROCESS,
   })
-  async processImageEvent(data: EnqueueFileDto) {
-    const name = data.fileUrl.split('/').pop();
+  async processImageEvent({ fileUrl, lang }: EnqueueFileDto) {
+    const name = await this.fileService.getFileName(fileUrl);
+    const size = await this.fileService.getFileSize(fileUrl);
     const file = await this.fileService.createFileEntity({
       name,
+      size,
+      lang,
+      url: fileUrl,
       type: FileTypeEnum.IMAGE,
-      lang: data.lang,
-      url: data.fileUrl,
       status: FileStatusEnum.PROCESSING,
     });
 
     try {
       this.logger.log(`Downloading file ${name}`);
-      const image = await this.fileService.downloadFile(data.fileUrl);
-      this.fileService.updateFileEntity(file.id, { size: image.length });
+      const image = await this.fileService.downloadFile(fileUrl);
+      await this.fileService.updateFileEntity(file.id, { size: image.length });
 
       this.logger.log(`Recognizing text`);
-      const text = await this.recognizeImage(image, data.lang);
-      this.fileService.updateFileEntity(file.id, {
+      const text = await this.recognizeImage(image, lang);
+      await this.fileService.updateFileEntity(file.id, {
         text,
         status: FileStatusEnum.READY,
       });
