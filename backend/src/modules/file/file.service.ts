@@ -1,14 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { EnqueueFileDto } from '../queue/dto/enqueue-file.dto';
 
-import { QueueService } from '../queue/queue.service';
-
 @Injectable()
 export class FileService {
-  constructor(readonly queueService: QueueService) {}
+  constructor() {}
 
-  enqueueFile(data: EnqueueFileDto) {
-    console.log(data);
-    this.queueService.enqueueFile(data);
+  createFile(data: EnqueueFileDto) {
+    console.log('creating file', data);
   }
 }

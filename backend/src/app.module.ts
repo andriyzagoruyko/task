@@ -36,6 +36,7 @@ import { QueueModule } from './modules/queue/queue.module';
       }),
       inject: [ConfigService],
     }),
+
   ],
 })
 export class AppModule {}
