@@ -1,27 +1,21 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { ClientsModule, Transport } from '@nestjs/microservices';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigService } from './config/config.service';
-import * as path from 'path';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { ConfigModule } from './config/config.module';
-
-export const MIGRATION_TABLE_NAME = '__migrations';
-export const MIGRATION_PATH = path.join(__dirname + '/migrations/*.{ts,js}');
-export const ENTITIES_PATHS = [
-  // NOTE: If this creates dependency loops, you will have to manually specify the
-  // list of entity files in a way that prevents a loop from being created.
-  path.join(__dirname + '/**/*.entity.{ts,js}'),
-];
+import migrations from './migration';
+import { JoiPipeModule } from 'nestjs-joi';
+import { FileModule } from './modules/file/file.module';
+import { MIGRATION_TABLE_NAME, ENTITIES_PATHS } from './definitions';
+import { QueueModule } from './modules/queue/queue.module';
 
 @Module({
   imports: [
+    QueueModule,
+    FileModule,
     ConfigModule,
-    ClientsModule.register([
-      { name: 'ITEM_MICROSERVICE', transport: Transport.TCP },
-    ]),
+    JoiPipeModule.forRoot(),
+
     TypeOrmModule.forRootAsync({
       useFactory: (config: ConfigService) => ({
         type: 'mysql',
@@ -33,7 +27,7 @@ export const ENTITIES_PATHS = [
         database: config.database.name,
         autoLoadEntities: true,
         migrationsTableName: MIGRATION_TABLE_NAME,
-        migrations: [MIGRATION_PATH],
+        migrations: migrations,
         entities: ENTITIES_PATHS,
         namingStrategy: new SnakeNamingStrategy(),
         migrationsRun: true,
@@ -43,7 +37,5 @@ export const ENTITIES_PATHS = [
       inject: [ConfigService],
     }),
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

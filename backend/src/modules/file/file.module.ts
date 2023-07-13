@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 import { FileService } from './file.service';
-import { FileController } from './file.controller';
+import { QueueModule } from '../queue/queue.module';
 
-@Module({ providers: [FileService], controllers: [FileController] })
+@Module({
+  imports: [QueueModule],
+  providers: [FileService],
+})
 export class FileModule {}

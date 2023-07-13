@@ -37,6 +37,17 @@ export class CreateFileTable1689237735364 implements MigrationInterface {
             isNullable: false,
           },
           {
+            name: 'text',
+            type: 'text',
+            isNullable: true,
+          },
+          {
+            name: 'lang',
+            type: 'varchar',
+            length: '30',
+            isNullable: false,
+          },
+          {
             name: 'created_at',
             type: 'datetime',
             default: 'CURRENT_TIMESTAMP',

@@ -16,6 +16,7 @@ services:
     working_dir: /app
     depends_on:
       - backend-db
+      - rabbitmq
     group_add:
       - "${DOCKER_GROUP_ID}"
     ports:
@@ -37,3 +38,16 @@ services:
       MYSQL_ROOT_PASSWORD: root
     volumes:
       - mysqldata_backend:/var/lib/mysql
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    volumes:
+      - /var/lib/rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      RABBITMQ_DEFAULT_USER: app
+      RABBITMQ_DEFAULT_PASS: app

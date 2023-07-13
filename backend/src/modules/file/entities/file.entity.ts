@@ -15,6 +15,12 @@ export class FileEntity {
   @Column({ type: 'varchar', length: 255 })
   status!: FileStatusEnum;
 
+  @Column({ type: 'varchar', length: 30 })
+  lang!: string;
+
+  @Column({ type: 'text' })
+  text!: string;
+
   @Column({ type: 'varchar', length: 255 })
   url!: FileStatusEnum;
 
