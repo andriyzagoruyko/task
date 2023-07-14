@@ -19,35 +19,39 @@ export class ImageProcessingConsumer {
     routingKey: ImageRoutesEnum.PROCESS,
   })
   async processImageEvent({ fileUrl, lang }: EnqueueFileDto) {
-    const name = await this.fileService.getFileName(fileUrl);
-    const size = await this.fileService.getFileSize(fileUrl);
+    const name = this.fileService.getFileName(fileUrl);
     const file = await this.fileService.createFileEntity({
       name,
-      size,
       lang,
       url: fileUrl,
       type: FileTypeEnum.IMAGE,
       status: FileStatusEnum.PROCESSING,
     });
-
     try {
+      await this.fileService.urlExists(fileUrl);
+
+      const size = await this.fileService.getFileSize(fileUrl);
+      await this.fileService.updateFileEntity(file.id, { name, size });
+
       this.logger.log(`Downloading file ${name}`);
       const image = await this.fileService.downloadFile(fileUrl);
       await this.fileService.updateFileEntity(file.id, { size: image.length });
 
       this.logger.log(`Recognizing text`);
-      const text = await this.recognizeImage(image, lang);
+      const text = await this.recognizeImageText(image, lang);
       await this.fileService.updateFileEntity(file.id, {
         text,
         status: FileStatusEnum.READY,
       });
       this.logger.log(`Text recognized successfully:\n${text}`);
     } catch (e) {
-      this.logger.error(`Unexpected exception during processing image: ${e}`);
+      const error = String(e);
+      await this.fileService.updateFileEntity(file.id, { error });
+      this.logger.error(`Exception occurred during processing image: ${error}`);
     }
   }
 
-  async recognizeImage(file: Buffer, lang: string) {
+  async recognizeImageText(file: Buffer, lang: string) {
     const res = await recognize(file, lang);
     const {
       data: { text },

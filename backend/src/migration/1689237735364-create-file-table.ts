@@ -1,4 +1,3 @@
-import { FileStatusEnum } from 'src/modules/file/enums/file-status.enum';
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
 export class CreateFileTable1689237735364 implements MigrationInterface {
@@ -53,6 +52,12 @@ export class CreateFileTable1689237735364 implements MigrationInterface {
             type: 'varchar',
             length: '30',
             isNullable: false,
+          },
+          {
+            name: 'error',
+            type: 'varchar',
+            length: '255',
+            isNullable: true,
           },
           {
             name: 'created_at',

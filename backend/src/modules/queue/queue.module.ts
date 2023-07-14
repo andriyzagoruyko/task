@@ -5,14 +5,7 @@ import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { QueueController } from './queue.controller';
 import { ImageProcessingConsumer } from './consumers/image-processing.consumer';
 import { FileModule } from '../file/file.module';
-
-const RabbitMQFactory = (config: ConfigService) => {
-  return {
-    exchanges: [{ name: 'image', type: 'topic' }],
-    uri: `amqp://${config.rabbitMq.user}:${config.rabbitMq.user}@${config.rabbitMq.host}:${config.rabbitMq.port}`,
-    enableControllerDiscovery: true,
-  };
-};
+import { RABBITMQ_AUDIO_TOPIC, RABBITMQ_IMAGE_TOPIC } from 'src/definitions';
 
 @Module({
   imports: [
@@ -27,3 +20,14 @@ const RabbitMQFactory = (config: ConfigService) => {
   controllers: [QueueController],
 })
 export class QueueModule {}
+
+function RabbitMQFactory(config: ConfigService) {
+  return {
+    exchanges: [
+      { name: RABBITMQ_IMAGE_TOPIC, type: 'topic' },
+      { name: RABBITMQ_AUDIO_TOPIC, type: 'topic' },
+    ],
+    uri: `amqp://${config.rabbitMq.user}:${config.rabbitMq.user}@${config.rabbitMq.host}:${config.rabbitMq.port}`,
+    enableControllerDiscovery: true,
+  };
+}

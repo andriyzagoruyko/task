@@ -33,6 +33,9 @@ export class FileEntity {
   @Column({ type: 'integer', nullable: true })
   size!: number;
 
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  error!: string;
+
   @CreateDateColumn({
     type: 'datetime',
     default: () => 'CURRENT_TIMESTAMP',

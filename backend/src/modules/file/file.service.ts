@@ -7,6 +7,8 @@ import { HttpService } from '@nestjs/axios';
 import { AxiosResponse } from 'axios';
 import { lastValueFrom } from 'rxjs';
 import * as ufs from 'url-file-size';
+import * as http from 'http';
+import * as https from 'https';
 
 @Injectable()
 export class FileService {
@@ -35,11 +37,39 @@ export class FileService {
     return res.data;
   }
 
-  async getFileSize(url: string) {
-    return ufs(url);
+  getFileName(url: string) {
+    return url.split('/').pop();
   }
 
-  async getFileName(url) {
-    return url.split('/').pop();
+  async getFileSize(url: string) {
+    return await ufs(url);
+  }
+
+  async urlExists(url) {
+    return new Promise((resolve, reject) => {
+      const req = url.startsWith('https://')
+        ? https.get(url, { timeout: 1000 })
+        : http.get(url, { timeout: 1000 });
+
+      req.once('response', (response) => {
+        req.destroy();
+        if (response.statusCode === 200) {
+          return resolve(true);
+        }
+        reject(
+          new Error(
+            `Unexpected error retrieving file, status: ${response.statusCode}`,
+          ),
+        );
+      });
+      req.once('error', (e) => {
+        req.destroy();
+        reject(e);
+      });
+      req.once('timeout', (e) => {
+        req.destroy();
+        reject(new Error(`File is not accessible`));
+      });
+    });
   }
 }
