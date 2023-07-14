@@ -9,16 +9,25 @@ import {
   SUPPORTED_IMAGE_TYPES,
 } from 'src/definitions';
 import { AudioRoutesEnum } from './enums/audio-routes.enum';
+import { FileService } from '../file/file.service';
 
 @Injectable()
 export class QueueService {
   private readonly logger = new Logger(QueueService.name);
 
-  constructor(private readonly amqpConnection: AmqpConnection) {}
+  constructor(
+    private readonly amqpConnection: AmqpConnection,
+    private readonly fileService: FileService,
+  ) {}
 
-  enqueueFile(data: EnqueueFileDto) {
-    const extension = this.getUrlExtension(data.fileUrl);
-    this.logger.log(`New event received ${JSON.stringify(data)}`);
+  async enqueueFile(data: EnqueueFileDto) {
+    let extension = '';
+    try {
+      extension = await this.fileService.getFileExtension(data.fileUrl);
+      this.logger.log(`New event received ${JSON.stringify(data)}`);
+    } catch (e) {
+      throw new BadRequestException(String(e));
+    }
 
     if (SUPPORTED_IMAGE_TYPES.includes(extension)) {
       return this.amqpConnection.publish<EnqueueFileDto>(
@@ -38,7 +47,6 @@ export class QueueService {
 
     throw new BadRequestException(`Extension ${extension} is not supported`);
   }
-
   getUrlExtension(url: string) {
     return url.split(/[#?]/)[0].split('.').pop().trim();
   }

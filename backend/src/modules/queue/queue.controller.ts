@@ -8,6 +8,6 @@ export class QueueController {
 
   @Post()
   enqueueFile(@Body() data: EnqueueFileDto) {
-    this.queueService.enqueueFile(data);
+    return this.queueService.enqueueFile(data);
   }
 }

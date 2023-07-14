@@ -28,7 +28,7 @@ export class ImageProcessingConsumer {
       status: FileStatusEnum.PROCESSING,
     });
     try {
-      await this.fileService.urlExists(fileUrl);
+      await this.fileService.fileExists(fileUrl);
 
       const size = await this.fileService.getFileSize(fileUrl);
       await this.fileService.updateFileEntity(file.id, { name, size });

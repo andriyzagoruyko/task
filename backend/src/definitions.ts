@@ -7,8 +7,8 @@ export const RABBITMQ_QUEUE_NAME = 'queue';
 export const RABBITMQ_IMAGE_TOPIC = 'image';
 export const RABBITMQ_AUDIO_TOPIC = 'audio';
 
-export const SUPPORTED_IMAGE_TYPES = ['jpeg', 'jpg', 'png'];
-export const SUPPORTED_AUDIO_TYPES = ['mp3', 'mp4'];
+export const SUPPORTED_IMAGE_TYPES = ['image/jpeg', 'image/png'];
+export const SUPPORTED_AUDIO_TYPES = ['audio/mpeg', 'video/mp4', 'audio/mp4'];
 
 export const AVAILABLE_LANGUAGES = [
   'afr',
