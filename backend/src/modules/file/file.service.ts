@@ -18,11 +18,15 @@ export class FileService {
     private readonly httpService: HttpService,
   ) {}
 
-  createFileEntity(fileData: DeepPartial<FileEntity>) {
+  getFiles() {
+    return this.fileRepository.createQueryBuilder().getMany();
+  }
+
+  createFile(fileData: DeepPartial<FileEntity>) {
     return this.fileRepository.save({ ...fileData });
   }
 
-  updateFileEntity(id: number, fileData: DeepPartial<FileEntity>) {
+  updateFile(id: number, fileData: DeepPartial<FileEntity>) {
     return this.fileRepository.update(id, fileData);
   }
 

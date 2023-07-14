@@ -20,7 +20,7 @@ export class ImageProcessingConsumer {
   })
   async processImageEvent({ fileUrl, lang }: EnqueueFileDto) {
     const name = this.fileService.getFileName(fileUrl);
-    const file = await this.fileService.createFileEntity({
+    const file = await this.fileService.createFile({
       name,
       lang,
       url: fileUrl,
@@ -31,22 +31,22 @@ export class ImageProcessingConsumer {
       await this.fileService.fileExists(fileUrl);
 
       const size = await this.fileService.getFileSize(fileUrl);
-      await this.fileService.updateFileEntity(file.id, { name, size });
+      await this.fileService.updateFile(file.id, { name, size });
 
       this.logger.log(`Downloading file ${name}`);
       const image = await this.fileService.downloadFile(fileUrl);
-      await this.fileService.updateFileEntity(file.id, { size: image.length });
+      await this.fileService.updateFile(file.id, { size: image.length });
 
       this.logger.log(`Recognizing text`);
       const text = await this.recognizeImageText(image, lang);
-      await this.fileService.updateFileEntity(file.id, {
+      await this.fileService.updateFile(file.id, {
         text,
         status: FileStatusEnum.READY,
       });
       this.logger.log(`Text recognized successfully:\n${text}`);
     } catch (e) {
       const error = String(e);
-      await this.fileService.updateFileEntity(file.id, { error });
+      await this.fileService.updateFile(file.id, { error });
       this.logger.error(`Exception occurred during processing image: ${error}`);
     }
   }
@@ -59,4 +59,3 @@ export class ImageProcessingConsumer {
     return text;
   }
 }
-

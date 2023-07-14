@@ -19,7 +19,7 @@ export class AudioProcessingConsumer {
   })
   async processAudioEvent({ fileUrl, lang }: EnqueueFileDto) {
     const name = this.fileService.getFileName(fileUrl);
-    const file = await this.fileService.createFileEntity({
+    const file = await this.fileService.createFile({
       name,
       lang,
       url: fileUrl,
@@ -29,10 +29,10 @@ export class AudioProcessingConsumer {
     try {
       await this.fileService.fileExists(fileUrl);
       const size = await this.fileService.getFileSize(fileUrl);
-      await this.fileService.updateFileEntity(file.id, { name, size });
+      await this.fileService.updateFile(file.id, { name, size });
     } catch (e) {
       const error = String(e);
-      await this.fileService.updateFileEntity(file.id, { error });
+      await this.fileService.updateFile(file.id, { error });
       this.logger.error(`Exception occurred during processing audio: ${error}`);
     }
   }
