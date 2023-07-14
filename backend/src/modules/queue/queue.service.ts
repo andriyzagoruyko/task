@@ -32,7 +32,7 @@ export class QueueService {
     if (SUPPORTED_IMAGE_TYPES.includes(extension)) {
       return this.amqpConnection.publish<EnqueueFileDto>(
         RABBITMQ_IMAGE_TOPIC,
-        ImageRoutesEnum.PROCESS,
+        ImageRoutesEnum.RECOGNIZE,
         data,
       );
     }
@@ -40,7 +40,7 @@ export class QueueService {
     if (SUPPORTED_AUDIO_TYPES.includes(extension)) {
       return this.amqpConnection.publish<EnqueueFileDto>(
         RABBITMQ_AUDIO_TOPIC,
-        AudioRoutesEnum.PROCESS,
+        AudioRoutesEnum.RECOGNIZE,
         data,
       );
     }

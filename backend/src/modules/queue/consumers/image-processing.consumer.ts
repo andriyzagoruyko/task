@@ -16,7 +16,7 @@ export class ImageProcessingConsumer {
 
   @RabbitSubscribe({
     exchange: RABBITMQ_IMAGE_TOPIC,
-    routingKey: ImageRoutesEnum.PROCESS,
+    routingKey: ImageRoutesEnum.RECOGNIZE,
   })
   async processImageEvent({ fileUrl, lang }: EnqueueFileDto) {
     const name = this.fileService.getFileName(fileUrl);
@@ -59,3 +59,4 @@ export class ImageProcessingConsumer {
     return text;
   }
 }
+

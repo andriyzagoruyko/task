@@ -1,3 +1,3 @@
 export enum AudioRoutesEnum {
-  PROCESS = 'process',
+  RECOGNIZE = 'recognize',
 }
