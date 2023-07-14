@@ -6,6 +6,7 @@ import { QueueController } from './queue.controller';
 import { ImageProcessingConsumer } from './consumers/image-processing.consumer';
 import { FileModule } from '../file/file.module';
 import { RABBITMQ_AUDIO_TOPIC, RABBITMQ_IMAGE_TOPIC } from 'src/definitions';
+import { AudioProcessingConsumer } from './consumers/audio-processing.consumer';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { RABBITMQ_AUDIO_TOPIC, RABBITMQ_IMAGE_TOPIC } from 'src/definitions';
       inject: [ConfigService],
     }),
   ],
-  providers: [QueueService, ImageProcessingConsumer],
+  providers: [QueueService, ImageProcessingConsumer, AudioProcessingConsumer],
   exports: [QueueService],
   controllers: [QueueController],
 })
