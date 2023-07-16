@@ -10,7 +10,10 @@ import {
   Typography,
 } from "@material-ui/core";
 import { createUseStyles } from "react-jss";
-import { AssetCard, FileStatusEnum, FileTypeEnum } from "./AssetCard";
+import { AssetCard, FileStatusEnum, FileTypeEnum, IAsset } from "./AssetCard";
+import { ApiRoutes } from "../definitions/api-routes";
+import useSWR from "swr";
+import { fetcher } from "../definitions/fetcher";
 
 const mockAssets = [
   {
@@ -56,6 +59,9 @@ const mockAssets = [
 ];
 
 export function Assets() {
+  const { data, error } = useSWR<IAsset[]>(ApiRoutes.files, fetcher);
+  console.log(data);
+
   const styles = useStyles();
   return (
     <Box className={styles.container}>
@@ -63,7 +69,7 @@ export function Assets() {
         Assets
       </Typography>
       <Box className={styles.assetWrapper}>
-        {mockAssets.map((asset) => (
+        {data?.map((asset) => (
           <Box className={styles.assetWrapper}>
             <AssetCard {...asset} />
           </Box>

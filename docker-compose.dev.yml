@@ -1,4 +1,4 @@
-version: '2.4'
+version: "2.4"
 
 volumes:
   mysqldata_db: {}
@@ -7,6 +7,18 @@ volumes:
   mysqldata_files: {}
 
 services:
+  proxy:
+    image: traefik:v2.2
+    command:
+      - "--log.level=DEBUG"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.constraints=Label(`traefik.tags`,`modellab`)"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    ports:
+      - 80:80
+
   app:
     build:
       context: .
@@ -15,6 +27,7 @@ services:
     hostname: task
     working_dir: /app
     depends_on:
+      - proxy
       - backend-db
       - rabbitmq
     group_add:
@@ -24,7 +37,25 @@ services:
       - 3000:3000
     volumes:
       - ./:/app
-      
+    labels:
+      - "traefik.enable=true"
+      - "traefik.tags=modellab"
+      # - "traefik.docker.network=02aiseemodellabstaging_services"
+
+      # backend
+      - "traefik.http.routers.backend.rule=Host(`localhost`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.backend.entrypoints=http"
+      - "traefik.http.routers.backend.middlewares=backend-stripprefix"
+      - "traefik.http.routers.backend.service=backend"
+      - "traefik.http.middlewares.backend-stripprefix.stripprefix.prefixes=/api"
+      - "traefik.http.services.backend.loadbalancer.server.port=8080"
+
+      # hub_frontend
+      - "traefik.http.routers.hub_frontend.rule=Host(`localhost`)"
+      - "traefik.http.routers.hub_frontend.entrypoints=http"
+      - "traefik.http.routers.hub_frontend.service=hub_frontend"
+      - "traefik.http.services.hub_frontend.loadbalancer.server.port=3000"
+
   backend-db:
     image: mysql:8.0.28-oracle
     hostname: backend-db

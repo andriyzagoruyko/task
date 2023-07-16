@@ -99,7 +99,7 @@ export const AssetCard: React.FC<IAsset> = ({
         <Typography component="p" className={styles.assetText} variant="body2">
           {error ??
             text ??
-            "There is no saved text at the moment. Probably the asset is in processing"}
+            "There is no saved text at the moment. Probably the asset is in processing or the asset has no text"}
         </Typography>
       </Stack>
     </Card>
