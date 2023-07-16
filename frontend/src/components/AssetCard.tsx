@@ -58,9 +58,18 @@ export const AssetCard: React.FC<IAsset> = ({
     <Card>
       <Box>
         <CardContent>
-          <Stack direction="row" justifyContent="space-between">
-            <Box>
-              <Typography component="div" variant="h5">
+          <Stack
+            direction="row"
+            flexWrap="wrap"
+            justifyContent={{ xs: "center", md: "flex-start" }}
+          >
+            <Stack
+              direction="column"
+              alignItems={{ xs: "center", sm: "flex-start" }}
+              flexGrow={1}
+              spacing={1}
+            >
+              <Typography component="div" variant="subtitle2">
                 {name}
               </Typography>
               <Chip
@@ -70,15 +79,17 @@ export const AssetCard: React.FC<IAsset> = ({
                   StatusColors[status] as Exclude<PropTypes.Color, "inherit">
                 }
               />
-            </Box>
-            <Stack alignItems="end">
-              <Typography variant="subtitle2" component="div">
+            </Stack>
+            <Stack
+              alignItems="end"
+              direction={{ xs: "row", md: "column" }}
+              spacing={1}
+              style={{ padding: 5 }}
+            >
+              <Typography variant="caption" component="div" >
                 Type: {type}
               </Typography>
-              <Typography variant="subtitle2" component="div">
-                {createdAt}
-              </Typography>
-              <Typography variant="subtitle2" component="div">
+              <Typography variant="caption" component="div">
                 {size / 1000} kB
               </Typography>
             </Stack>

@@ -14,12 +14,15 @@ import { createUseStyles } from "react-jss";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Stack from "@mui/material/Stack";
 import { IRow, Rows } from "./Rows";
+import { useAppContext } from "../context";
+import { makeRequest } from "../helpers/makeRequest";
+import { ApiRouteEnum } from "../definitions/api-routes";
 
 const URL_REGEX =
   /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
 
 const EMPTY_ROW = {
-  fileLink: "",
+  fileUrl: "",
   lang: "",
   isLinkValid: false,
   isLangValid: false,
@@ -29,6 +32,17 @@ const EMPTY_ROW = {
 export function Form() {
   const styles = useStyles();
   const [rows, setRows] = useState<IRow[]>([EMPTY_ROW]);
+
+  const createAsset = async (row: IRow) => {
+    const { fileUrl, lang } = row;
+    await makeRequest(ApiRouteEnum.ENQUEUE_FILE, "POST", { fileUrl, lang });
+  };
+
+  const enqueueRows = async () => {
+    for (const row of rows) {
+      await createAsset(row);
+    }
+  };
 
   const updateRow = (index: number, updatedItem: IRow) => {
     const nextItems = [...rows];
@@ -40,7 +54,7 @@ export function Form() {
   const handleAddRow = () => setRows([...rows, EMPTY_ROW]);
 
   const handleLinkChange = (index: number, fileLink: string) =>
-    updateRow(index, { ...rows[index], fileLink });
+    updateRow(index, { ...rows[index], fileUrl: fileLink });
 
   const handleLangChange = (index: number, lang: string) =>
     updateRow(index, { ...rows[index], lang });
@@ -55,7 +69,7 @@ export function Form() {
     const nextItems = [...rows];
     nextItems[index] = {
       ...item,
-      isLinkValid: !!item.fileLink.match(URL_REGEX),
+      isLinkValid: !!item.fileUrl.match(URL_REGEX),
       isLangValid: !!item.lang,
       isTouched: true,
     };
@@ -63,6 +77,8 @@ export function Form() {
   };
 
   const hasValidRows = rows.every((row) => row.isLinkValid && row.isLangValid);
+
+
 
   return (
     <>
@@ -79,7 +95,11 @@ export function Form() {
             Add more
           </Button>
           {hasValidRows ? (
-            <Button variant="contained" color="primary">
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => enqueueRows()}
+            >
               Send
             </Button>
           ) : (

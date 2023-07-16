@@ -1,10 +1,10 @@
-import { IconButton, Paper, TextField } from "@material-ui/core";
+import { IconButton, Paper, TextField, Typography } from "@material-ui/core";
 import { Stack, Autocomplete } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { createUseStyles } from "react-jss";
 
 export interface IRow {
-  fileLink: string;
+  fileUrl: string;
   lang: string;
   isLinkValid: boolean;
   isLangValid: boolean;
@@ -25,6 +25,7 @@ export const Rows = ({
   onLinkChange,
 }: IRowPros) => {
   const styles = useStyles();
+
   return (
     <>
       {rows.map((row, index) => (
@@ -44,14 +45,14 @@ export const Rows = ({
                   ? "Link is not valid"
                   : "File link"
               }
-              value={row.fileLink}
+              value={row.fileUrl}
               onChange={({ target }) => onLinkChange(index, target.value)}
             />
             <Autocomplete
               onChange={(_, value) => onLangChange(index, value ?? "")}
               disablePortal
-              options={["UKR", "EN"]}
-              sx={{ minWidth: 100 }}
+              options={["ukr", "eng"]}
+              sx={{ minWidth: 100, marginLeft: 1 }}
               renderInput={(params) => (
                 <TextField
                   {...params}

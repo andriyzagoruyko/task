@@ -64,14 +64,35 @@ const mockAssets = [
 export function Assets() {
   const { assets, setAssets } = useAppContext();
 
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
-    makeRequest(ApiRouteEnum.FILES, "GET").then(setAssets).catch(console.log);
+    makeRequest(ApiRouteEnum.FILES, "GET")
+      .then(setAssets)
+      .catch(console.log)
+      .finally(() => setIsLoading(false));
   }, [setAssets]);
 
   const styles = useStyles();
 
-  if (!assets) {
-    return <>loading</>;
+  if (isLoading) {
+    return (
+      <Box className={styles.container}>
+        <Typography variant="h4" style={{ textAlign: "center" }}>
+          Loading...
+        </Typography>
+      </Box>
+    );
+  }
+
+  if (!assets.length && !isLoading) {
+    return (
+      <Box className={styles.container}>
+        <Typography variant="h4" style={{ textAlign: "center" }}>
+          There are no assets at the moment
+        </Typography>
+      </Box>
+    );
   }
 
   return (
@@ -96,6 +117,6 @@ const useStyles = createUseStyles({
     marginTop: 60,
   },
   assetWrapper: {
-    margin: " 16px 0 16px 0",
+    margin: " 30px 0 30px 0",
   },
 });

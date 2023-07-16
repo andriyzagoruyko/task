@@ -57,7 +57,9 @@ export class HttpService {
       if (response.statusCode === 200) {
         return onResponse(response);
       }
-      throw new Error(`File is not accessible, status: ${response.statusCode}`);
+      return onError(
+        new Error(`File is not accessible, status: ${response.statusCode}`),
+      );
     });
 
     req.once('error', (e) => {
