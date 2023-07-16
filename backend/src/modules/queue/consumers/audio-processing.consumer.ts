@@ -28,7 +28,7 @@ export class AudioProcessingConsumer {
       lang,
       url: fileUrl,
       type: FileTypeEnum.AUDIO,
-      status: FileStatusEnum.QUEUED,
+      status: FileStatusEnum.SAVED,
     });
     try {
       const size = await this.httpService.getContentLength(fileUrl);

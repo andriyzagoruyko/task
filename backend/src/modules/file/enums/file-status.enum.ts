@@ -1,5 +1,5 @@
 export enum FileStatusEnum {
-  QUEUED = 'queued',
+  SAVED = 'saved',
   PROCESSING = 'processing',
   READY = 'ready',
   FAILED = 'failed',
