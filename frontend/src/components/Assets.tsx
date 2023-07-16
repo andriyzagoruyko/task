@@ -11,9 +11,12 @@ import {
 } from "@material-ui/core";
 import { createUseStyles } from "react-jss";
 import { AssetCard, FileStatusEnum, FileTypeEnum, IAsset } from "./AssetCard";
-import { ApiRoutes } from "../definitions/api-routes";
+import { ApiRouteEnum } from "../definitions/api-routes";
 import useSWR from "swr";
 import { fetcher } from "../definitions/fetcher";
+import { useEffect, useState } from "react";
+import { useAppContext } from "../context";
+import { makeRequest } from "../helpers/makeRequest";
 
 const mockAssets = [
   {
@@ -59,17 +62,26 @@ const mockAssets = [
 ];
 
 export function Assets() {
-  const { data, error } = useSWR<IAsset[]>(ApiRoutes.files, fetcher);
-  console.log(data);
+  const { assets, setAssets } = useAppContext();
+
+  useEffect(() => {
+    makeRequest(ApiRouteEnum.FILES, "GET").then(setAssets).catch(console.log);
+  }, [setAssets]);
 
   const styles = useStyles();
+
+  if (!assets) {
+    return <>loading</>;
+  }
+
   return (
     <Box className={styles.container}>
       <Typography variant="h4" style={{ textAlign: "center" }}>
         Assets
       </Typography>
       <Box className={styles.assetWrapper}>
-        {data?.map((asset) => (
+        {!assets ? <Typography>loading</Typography> : null}
+        {assets?.map((asset) => (
           <Box className={styles.assetWrapper}>
             <AssetCard {...asset} />
           </Box>

@@ -1,3 +1,3 @@
-export const ApiRoutes = {
-  files: `files`,
-};
+export enum ApiRouteEnum {
+  FILES = "files",
+}
