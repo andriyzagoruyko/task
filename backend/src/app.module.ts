@@ -8,6 +8,7 @@ import { JoiPipeModule } from 'nestjs-joi';
 import { FileModule } from './modules/file/file.module';
 import { MIGRATION_TABLE_NAME, ENTITIES_PATHS } from './definitions';
 import { QueueModule } from './modules/queue/queue.module';
+import { HttpModule } from './modules/http/http.module';
 
 @Module({
   imports: [
@@ -36,6 +37,8 @@ import { QueueModule } from './modules/queue/queue.module';
       }),
       inject: [ConfigService],
     }),
+
+    HttpModule,
   ],
 })
 export class AppModule {}

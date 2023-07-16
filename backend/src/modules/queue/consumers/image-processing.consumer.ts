@@ -7,19 +7,23 @@ import { FileService } from 'src/modules/file/file.service';
 import { FileTypeEnum } from 'src/modules/file/enums/file-type.enum';
 import { FileStatusEnum } from 'src/modules/file/enums/file-status.enum';
 import { recognize } from 'tesseract.js';
+import { HttpService } from 'src/modules/http/http.service';
 
 @Injectable()
 export class ImageProcessingConsumer {
   logger = new Logger(ImageProcessingConsumer.name);
 
-  constructor(private readonly fileService: FileService) {}
+  constructor(
+    private readonly fileService: FileService,
+    private readonly httpService: HttpService,
+  ) {}
 
   @RabbitSubscribe({
     exchange: RABBITMQ_IMAGE_TOPIC,
     routingKey: ImageRoutesEnum.RECOGNIZE,
   })
   async processImageEvent({ fileUrl, lang }: EnqueueFileDto) {
-    const name = this.fileService.getFileName(fileUrl);
+    const name = this.httpService.getUrlFileName(fileUrl);
     const file = await this.fileService.createFile({
       name,
       lang,
@@ -28,14 +32,11 @@ export class ImageProcessingConsumer {
       status: FileStatusEnum.PROCESSING,
     });
     try {
-      await this.fileService.fileExists(fileUrl);
-
-      const size = await this.fileService.getFileSize(fileUrl);
-      await this.fileService.updateFile(file.id, { name, size });
+      const size = await this.httpService.getContentLength(fileUrl);
+      await this.fileService.updateFile(file.id, { size });
 
       this.logger.log(`Downloading file ${name}`);
-      const image = await this.fileService.downloadFile(fileUrl);
-      await this.fileService.updateFile(file.id, { size: image.length });
+      const image = await this.httpService.downloadFile(fileUrl);
 
       this.logger.log(`Recognizing text`);
       const text = await this.recognizeImageText(image, lang);

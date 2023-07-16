@@ -9,7 +9,7 @@ import {
   SUPPORTED_IMAGE_TYPES,
 } from 'src/definitions';
 import { AudioRoutesEnum } from './enums/audio-routes.enum';
-import { FileService } from '../file/file.service';
+import { HttpService } from '../http/http.service';
 
 @Injectable()
 export class QueueService {
@@ -17,37 +17,42 @@ export class QueueService {
 
   constructor(
     private readonly amqpConnection: AmqpConnection,
-    private readonly fileService: FileService,
+    private readonly httpService: HttpService,
   ) {}
 
   async enqueueFile(data: EnqueueFileDto) {
     let extension = '';
     try {
-      extension = await this.fileService.getFileExtension(data.fileUrl);
+      extension = await this.httpService.getContentType(data.fileUrl);
       this.logger.log(`New event received ${JSON.stringify(data)}`);
     } catch (e) {
       throw new BadRequestException(String(e));
     }
 
     if (SUPPORTED_IMAGE_TYPES.includes(extension)) {
-      return this.amqpConnection.publish<EnqueueFileDto>(
-        RABBITMQ_IMAGE_TOPIC,
-        ImageRoutesEnum.RECOGNIZE,
-        data,
-      );
+      return this.publishToImageTopic(data);
     }
 
     if (SUPPORTED_AUDIO_TYPES.includes(extension)) {
-      return this.amqpConnection.publish<EnqueueFileDto>(
-        RABBITMQ_AUDIO_TOPIC,
-        AudioRoutesEnum.RECOGNIZE,
-        data,
-      );
+      return this.publishToAudioTopic(data);
     }
 
     throw new BadRequestException(`Extension ${extension} is not supported`);
   }
-  getUrlExtension(url: string) {
-    return url.split(/[#?]/)[0].split('.').pop().trim();
+
+  publishToImageTopic(data: EnqueueFileDto) {
+    this.amqpConnection.publish<EnqueueFileDto>(
+      RABBITMQ_IMAGE_TOPIC,
+      ImageRoutesEnum.RECOGNIZE,
+      data,
+    );
+  }
+
+  publishToAudioTopic(data: EnqueueFileDto) {
+    this.amqpConnection.publish<EnqueueFileDto>(
+      RABBITMQ_AUDIO_TOPIC,
+      AudioRoutesEnum.RECOGNIZE,
+      data,
+    );
   }
 }

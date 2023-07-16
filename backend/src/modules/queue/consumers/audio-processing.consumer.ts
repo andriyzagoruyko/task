@@ -6,19 +6,23 @@ import { FileService } from 'src/modules/file/file.service';
 import { FileTypeEnum } from 'src/modules/file/enums/file-type.enum';
 import { FileStatusEnum } from 'src/modules/file/enums/file-status.enum';
 import { AudioRoutesEnum } from '../enums/audio-routes.enum';
+import { HttpService } from 'src/modules/http/http.service';
 
 @Injectable()
 export class AudioProcessingConsumer {
   logger = new Logger(AudioProcessingConsumer.name);
 
-  constructor(private readonly fileService: FileService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly fileService: FileService,
+  ) {}
 
   @RabbitSubscribe({
     exchange: RABBITMQ_AUDIO_TOPIC,
     routingKey: AudioRoutesEnum.RECOGNIZE,
   })
   async processAudioEvent({ fileUrl, lang }: EnqueueFileDto) {
-    const name = this.fileService.getFileName(fileUrl);
+    const name = this.httpService.getUrlFileName(fileUrl);
     const file = await this.fileService.createFile({
       name,
       lang,
@@ -27,8 +31,7 @@ export class AudioProcessingConsumer {
       status: FileStatusEnum.QUEUED,
     });
     try {
-      await this.fileService.fileExists(fileUrl);
-      const size = await this.fileService.getFileSize(fileUrl);
+      const size = await this.httpService.getContentLength(fileUrl);
       await this.fileService.updateFile(file.id, { name, size });
     } catch (e) {
       const error = String(e);

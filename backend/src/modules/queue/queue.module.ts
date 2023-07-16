@@ -7,9 +7,11 @@ import { ImageProcessingConsumer } from './consumers/image-processing.consumer';
 import { FileModule } from '../file/file.module';
 import { RABBITMQ_AUDIO_TOPIC, RABBITMQ_IMAGE_TOPIC } from 'src/definitions';
 import { AudioProcessingConsumer } from './consumers/audio-processing.consumer';
+import { HttpModule } from '../http/http.module';
 
 @Module({
   imports: [
+    HttpModule,
     FileModule,
     RabbitMQModule.forRootAsync(RabbitMQModule, {
       useFactory: RabbitMQFactory,
