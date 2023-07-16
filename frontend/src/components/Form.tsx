@@ -13,6 +13,7 @@ import { createUseStyles } from "react-jss";
 
 import DeleteIcon from "@mui/icons-material/Delete";
 import Stack from "@mui/material/Stack";
+import { IRow, Rows } from "./Rows";
 
 const URL_REGEX =
   /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
@@ -24,14 +25,6 @@ const EMPTY_ROW = {
   isLangValid: false,
   isTouched: false,
 };
-
-interface IRow {
-  fileLink: string;
-  lang: string;
-  isLinkValid: boolean;
-  isLangValid: boolean;
-  isTouched: boolean;
-}
 
 export function Form() {
   const styles = useStyles();
@@ -75,42 +68,12 @@ export function Form() {
     <>
       <Box className={styles.formContainer}>
         <Typography variant="h4">Past your link</Typography>
-        {rows.map((row, index) => (
-          <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
-            <IconButton
-              onClick={() => handleDeleteRow(index)}
-              disabled={rows.length <= 1}
-            >
-              <DeleteIcon />
-            </IconButton>
-            <Paper className={styles.formRow}>
-              <TextField
-                error={!row.isLinkValid && row.isTouched}
-                className={styles.field}
-                label={
-                  !row.isLinkValid && row.isTouched
-                    ? "Link is not valid"
-                    : "File link"
-                }
-                value={row.fileLink}
-                onChange={({ target }) => handleLinkChange(index, target.value)}
-              />
-              <Autocomplete
-                onChange={(_, value) => handleLangChange(index, value ?? "")}
-                disablePortal
-                options={["UKR", "EN"]}
-                sx={{ minWidth: 100 }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    error={!row.isLangValid && row.isTouched}
-                    label="Language"
-                  />
-                )}
-              />
-            </Paper>
-          </Stack>
-        ))}
+        <Rows
+          rows={rows}
+          onLangChange={handleLangChange}
+          onLinkChange={handleLinkChange}
+          onRowDelete={handleDeleteRow}
+        />
         <Stack direction="row" spacing={2} className={styles.buttonsContainer}>
           <Button variant="contained" onClick={handleAddRow}>
             Add more
@@ -145,17 +108,7 @@ const useStyles = createUseStyles({
     margin: "0 auto 0 auto",
     textAlign: "center",
   },
-  formRow: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "stretch",
-    padding: 16,
-    margin: "16px 0 16px 0!important",
-    width: "100%",
-  },
-  field: {
-    flexGrow: 2,
-  },
+
   select: {
     flexBasis: 120,
   },
