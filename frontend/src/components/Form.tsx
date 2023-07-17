@@ -17,6 +17,9 @@ import { IRow, Rows } from "./Rows";
 import { useAppContext } from "../context";
 import { makeRequest } from "../helpers/makeRequest";
 import { ApiRouteEnum } from "../definitions/api-routes";
+import Snackbar from "@mui/material/Snackbar";
+import { AxiosError } from "axios";
+import { Alert } from "@mui/material";
 
 const URL_REGEX =
   /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
@@ -32,15 +35,29 @@ const EMPTY_ROW = {
 export function Form() {
   const styles = useStyles();
   const [rows, setRows] = useState<IRow[]>([EMPTY_ROW]);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasAddedAssets, setHasAddedAssets] = useState(false);
 
   const createAsset = async (row: IRow) => {
     const { fileUrl, lang } = row;
-    await makeRequest(ApiRouteEnum.ENQUEUE_FILE, "POST", { fileUrl, lang });
+    setError("");
+    setIsLoading(true);
+    await makeRequest(ApiRouteEnum.ENQUEUE_FILE, "POST", {
+      fileUrl,
+      lang,
+    }).finally(() => setIsLoading(false));
   };
 
-  const enqueueRows = async () => {
+  const enqueueAssetsFromRows = async () => {
     for (const row of rows) {
-      await createAsset(row);
+      try {
+        await createAsset(row);
+        setHasAddedAssets(true)
+      } catch (e: any) {
+        const message = e.response?.data?.message ?? e.message;
+        setError(message);
+      }
     }
   };
 
@@ -51,7 +68,10 @@ export function Form() {
     validateRow(index, nextItems[index]);
   };
 
-  const handleAddRow = () => setRows([...rows, EMPTY_ROW]);
+  const handleAddRow = () => {
+    setRows([...rows, EMPTY_ROW]);
+    setHasAddedAssets(false)
+  };
 
   const handleLinkChange = (index: number, fileLink: string) =>
     updateRow(index, { ...rows[index], fileUrl: fileLink });
@@ -77,8 +97,8 @@ export function Form() {
   };
 
   const hasValidRows = rows.every((row) => row.isLinkValid && row.isLangValid);
-
-
+  const handleCloseSnackbar = () => setError("");
+  console.log(error, hasAddedAssets);
 
   return (
     <>
@@ -98,7 +118,8 @@ export function Form() {
             <Button
               variant="contained"
               color="primary"
-              onClick={() => enqueueRows()}
+              onClick={() => enqueueAssetsFromRows()}
+              disabled={isLoading}
             >
               Send
             </Button>
@@ -115,6 +136,17 @@ export function Form() {
           )}
         </Stack>
       </Box>
+      <Snackbar
+        open={!!error}
+        autoHideDuration={2000}
+        onClose={handleCloseSnackbar}
+        message={error}
+      />
+      {!!hasAddedAssets && (
+        <Alert severity="success" className={styles.successMessage}>
+          Successfully added asset
+        </Alert>
+      )}
     </>
   );
 }
@@ -138,5 +170,11 @@ const useStyles = createUseStyles({
   },
   addMoreButton: {
     marginRight: "12px!important",
+  },
+  successMessage: {
+    width: "280px",
+    marginLeft: "auto",
+    marginRight: "auto",
+    marginTop: 30,
   },
 });
