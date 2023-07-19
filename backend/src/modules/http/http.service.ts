@@ -1,22 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService as AxiosService } from '@nestjs/axios';
-import { AxiosResponse } from 'axios';
-import { lastValueFrom } from 'rxjs';
 import * as http from 'http';
 import * as https from 'https';
 
 @Injectable()
 export class HttpService {
-  constructor(private readonly httpService: AxiosService) {}
+  constructor() {}
 
-  async downloadFile(url: string) {
-    const source$ = this.httpService.get<Buffer>(url, {
-      responseType: 'arraybuffer',
-      maxContentLength: Infinity,
-      maxBodyLength: Infinity,
-    });
-    const res = await lastValueFrom<AxiosResponse<Buffer, any>>(source$);
-    return res.data;
+  async downloadFile(url: string): Promise<Buffer> {
+    return this.download(url);
   }
 
   getUrlFileName(url: string) {
@@ -25,17 +17,13 @@ export class HttpService {
 
   async getContentType(url: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
-      this.makeHttpGetRequest(
-        url,
-        (res) => resolve(res.headers['content-type']),
-        reject,
-      );
+      this.request(url, (res) => resolve(res.headers['content-type']), reject);
     });
   }
 
   async getContentLength(url: string) {
     return new Promise<number>((resolve, reject) => {
-      this.makeHttpGetRequest(
+      this.request(
         url,
         (res) => resolve(Number(res.headers['content-length'])),
         reject,
@@ -43,7 +31,7 @@ export class HttpService {
     });
   }
 
-  async makeHttpGetRequest(
+  async request(
     url: string,
     onResponse: (res: http.IncomingMessage) => void,
     onError: (err: unknown) => void,
@@ -57,6 +45,7 @@ export class HttpService {
       if (response.statusCode === 200) {
         return onResponse(response);
       }
+
       return onError(
         new Error(`File is not accessible, status: ${response.statusCode}`),
       );
@@ -70,6 +59,26 @@ export class HttpService {
     req.once('timeout', (e) => {
       req.destroy();
       onError(e);
+    });
+  }
+
+  download(url: string): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      const req = https.get(url, { timeout: 3000 }, (res) => {
+        const totalBytes = Number(res.headers['content-length']);
+        const data = [];
+        let receivedBytes = 0;
+        res.on('readable', function () {
+          const chunk = this.read();
+          if (chunk) {
+            data.push(chunk);
+            receivedBytes += Buffer.byteLength(chunk);
+            console.log('Downloading file', (receivedBytes / totalBytes) * 100);
+          }
+        });
+        res.on('end', () => resolve(Buffer.concat(data)));
+      });
+      req.on('error', reject);
     });
   }
 }

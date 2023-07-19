@@ -53,7 +53,7 @@ export function Form() {
     for (const row of rows) {
       try {
         await createAsset(row);
-        setHasAddedAssets(true)
+        setHasAddedAssets(true);
       } catch (e: any) {
         const message = e.response?.data?.message ?? e.message;
         setError(message);
@@ -70,7 +70,7 @@ export function Form() {
 
   const handleAddRow = () => {
     setRows([...rows, EMPTY_ROW]);
-    setHasAddedAssets(false)
+    setHasAddedAssets(false);
   };
 
   const handleLinkChange = (index: number, fileLink: string) =>
@@ -143,9 +143,9 @@ export function Form() {
         message={error}
       />
       {!!hasAddedAssets && (
-        <Alert severity="success" className={styles.successMessage}>
-          Successfully added asset
-        </Alert>
+        <Paper className={styles.successMessage}>
+          <Alert severity="success">Successfully added asset</Alert>
+        </Paper>
       )}
     </>
   );

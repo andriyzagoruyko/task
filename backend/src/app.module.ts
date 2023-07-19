@@ -16,7 +16,6 @@ import { HttpModule } from './modules/http/http.module';
     FileModule,
     ConfigModule,
     JoiPipeModule.forRoot(),
-
     TypeOrmModule.forRootAsync({
       useFactory: (config: ConfigService) => ({
         type: 'mysql',

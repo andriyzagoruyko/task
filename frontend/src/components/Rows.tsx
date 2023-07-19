@@ -2,6 +2,7 @@ import { IconButton, Paper, TextField, Typography } from "@material-ui/core";
 import { Stack, Autocomplete } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { createUseStyles } from "react-jss";
+import { AVAILABLE_LANGUAGES } from "../definitions/available-languages";
 
 export interface IRow {
   fileUrl: string;
@@ -51,7 +52,7 @@ export const Rows = ({
             <Autocomplete
               onChange={(_, value) => onLangChange(index, value ?? "")}
               disablePortal
-              options={["ukr", "eng"]}
+              options={AVAILABLE_LANGUAGES}
               sx={{ minWidth: 100, marginLeft: 1 }}
               renderInput={(params) => (
                 <TextField
