@@ -9,6 +9,7 @@ import { FileModule } from './modules/file/file.module';
 import { MIGRATION_TABLE_NAME, ENTITIES_PATHS } from './definitions';
 import { QueueModule } from './modules/queue/queue.module';
 import { HttpModule } from './modules/http/http.module';
+import { WebsocketModule } from './modules/websocket/websocket.module';
 
 @Module({
   imports: [
@@ -36,8 +37,8 @@ import { HttpModule } from './modules/http/http.module';
       }),
       inject: [ConfigService],
     }),
-
     HttpModule,
+    WebsocketModule,
   ],
 })
 export class AppModule {}

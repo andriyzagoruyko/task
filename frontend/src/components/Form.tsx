@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import Autocomplete from "@mui/material/Autocomplete";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createUseStyles } from "react-jss";
 
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -20,6 +20,7 @@ import { ApiRouteEnum } from "../definitions/api-routes";
 import Snackbar from "@mui/material/Snackbar";
 import { AxiosError } from "axios";
 import { Alert } from "@mui/material";
+import { io } from "socket.io-client";
 
 const URL_REGEX =
   /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
@@ -32,12 +33,32 @@ const EMPTY_ROW = {
   isTouched: false,
 };
 
+export const socket = io("localhost", { path: "/api/socket.io" });
+
 export function Form() {
   const styles = useStyles();
   const [rows, setRows] = useState<IRow[]>([EMPTY_ROW]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [hasAddedAssets, setHasAddedAssets] = useState(false);
+
+  useEffect(() => {
+    function onConnect() {
+      console.log("connected");
+    }
+
+    function onDisconnect() {
+      console.log("disconnected");
+    }
+
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+
+    return () => {
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
+    };
+  }, []);
 
   const createAsset = async (row: IRow) => {
     const { fileUrl, lang } = row;
