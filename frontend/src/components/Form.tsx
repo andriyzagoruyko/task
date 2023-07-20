@@ -41,6 +41,9 @@ export function Form() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [hasAddedAssets, setHasAddedAssets] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  console.log(progress);
 
   useEffect(() => {
     function onConnect() {
@@ -51,6 +54,7 @@ export function Form() {
       console.log("disconnected");
     }
 
+    socket.on("progress", setProgress);
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
 
@@ -67,6 +71,7 @@ export function Form() {
     await makeRequest(ApiRouteEnum.ENQUEUE_FILE, "POST", {
       fileUrl,
       lang,
+      userId: socket.id
     }).finally(() => setIsLoading(false));
   };
 

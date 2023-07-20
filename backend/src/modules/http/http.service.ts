@@ -1,16 +1,49 @@
 import { Injectable } from '@nestjs/common';
-import { HttpService as AxiosService } from '@nestjs/axios';
 import * as http from 'http';
 import * as https from 'https';
+import { WebsocketService } from '../websocket/websocket.service';
 
 @Injectable()
 export class HttpService {
-  constructor() {}
+  downloadFile(
+    url: string,
+    onProgress?: (progress: number) => void,
+  ): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      const req = https.get(url, { timeout: 3000 }, (res) => {
+        const totalBytes = Number(res.headers['content-length']);
+        const data = [];
+        let receivedBytes = 0;
+        res.on('readable', function () {
+          const chunk = this.read();
+          if (chunk) {
+            const progress = (receivedBytes / totalBytes) * 100;
+            console.log('Downloading file...', progress);
 
-  async downloadFile(url: string): Promise<Buffer> {
-    return this.download(url);
+            data.push(chunk);
+            receivedBytes += Buffer.byteLength(chunk);
+
+            onProgress?.(progress);
+          }
+        });
+
+        res.once('end', () => {
+          req.destroy();
+          resolve(Buffer.concat(data));
+        });
+
+        res.once('error', (e) => {
+          req.destroy();
+          reject(e);
+        });
+      });
+
+      req.once('error', (e) => {
+        req.destroy();
+        reject(e);
+      });
+    });
   }
-
   getUrlFileName(url: string) {
     return url.split('/').pop();
   }
@@ -59,26 +92,6 @@ export class HttpService {
     req.once('timeout', (e) => {
       req.destroy();
       onError(e);
-    });
-  }
-
-  download(url: string): Promise<Buffer> {
-    return new Promise((resolve, reject) => {
-      const req = https.get(url, { timeout: 3000 }, (res) => {
-        const totalBytes = Number(res.headers['content-length']);
-        const data = [];
-        let receivedBytes = 0;
-        res.on('readable', function () {
-          const chunk = this.read();
-          if (chunk) {
-            data.push(chunk);
-            receivedBytes += Buffer.byteLength(chunk);
-            console.log('Downloading file', (receivedBytes / totalBytes) * 100);
-          }
-        });
-        res.on('end', () => resolve(Buffer.concat(data)));
-      });
-      req.on('error', reject);
     });
   }
 }

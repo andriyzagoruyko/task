@@ -12,4 +12,7 @@ export class EnqueueFileDto {
       .valid(...AVAILABLE_LANGUAGES),
   )
   lang!: string;
+
+  @JoiSchema(Joi.string().required())
+  userId!: string;
 }

@@ -27,5 +27,4 @@ export class WebsocketGateway
   handleConnection(client: Socket, ...args: any[]) {
     this.logger.log(`Client Connected: ${client.id}`);
   }
-  constructor(private readonly websocketService: WebsocketService) {}
 }
