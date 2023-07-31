@@ -1,6 +1,6 @@
 import React from "react";
 import { AppBar, Container, Toolbar, Typography } from "@material-ui/core";
-import { Form } from "./components/Form";
+import { Form } from "./components/Form/Form";
 import { Assets } from "./components/Assets";
 import { createUseStyles } from "react-jss";
 import { AppContextProvider } from "./context";

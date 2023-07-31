@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as http from 'http';
 import * as https from 'https';
-import { WebsocketService } from '../websocket/websocket.service';
 
 @Injectable()
 export class HttpService {
@@ -17,11 +16,12 @@ export class HttpService {
         res.on('readable', function () {
           const chunk = this.read();
           if (chunk) {
+            receivedBytes += Buffer.byteLength(chunk);
             const progress = (receivedBytes / totalBytes) * 100;
+
             console.log('Downloading file...', progress);
 
             data.push(chunk);
-            receivedBytes += Buffer.byteLength(chunk);
 
             onProgress?.(progress);
           }
