@@ -9,4 +9,9 @@ export class FileController {
   getFiles() {
     return this.fileService.getFiles();
   }
+
+  @Get('stats')
+  getStats() {
+    return this.fileService.getStats();
+  }
 }

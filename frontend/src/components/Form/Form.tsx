@@ -1,15 +1,12 @@
 import { Box, Button, Paper, Tooltip, Typography } from "@material-ui/core";
 import { createUseStyles } from "react-jss";
-
 import Stack from "@mui/material/Stack";
-import { Rows } from "../Rows";
-
+import { Rows } from "./Rows";
 import Snackbar from "@mui/material/Snackbar";
 import { Alert } from "@mui/material";
 import { useRows } from "./hooks/useRows";
 import { ProgressBar } from "../ProgressBar";
 import { useProgress } from "./hooks/useProgress";
-
 
 export function Form() {
   const styles = useStyles();
@@ -26,17 +23,15 @@ export function Form() {
   } = useRows();
 
   const { progress, userId } = useProgress();
+  const hasValidRows = rows.every((row) => row.isLinkValid && row.isLangValid);
 
   const handleLinkChange = (index: number, fileLink: string) =>
     updateRow(index, { ...rows[index], fileUrl: fileLink });
-
   const handleLangChange = (index: number, lang: string) =>
     updateRow(index, { ...rows[index], lang });
-
   const handleCloseSnackbar = () => setError("");
-
-  const hasValidRows = rows.every((row) => row.isLinkValid && row.isLangValid);
-
+  const handleSubmitClick = () => createAssetsFromRows(userId)
+  
   return (
     <>
       <ProgressBar progress={progress} />
@@ -56,7 +51,7 @@ export function Form() {
             <Button
               variant="contained"
               color="primary"
-              onClick={() => createAssetsFromRows(userId)}
+              onClick={handleSubmitClick}
               disabled={isLoading}
             >
               Send
@@ -88,7 +83,6 @@ export function Form() {
     </>
   );
 }
-
 const useStyles = createUseStyles({
   formContainer: {
     display: "flex",

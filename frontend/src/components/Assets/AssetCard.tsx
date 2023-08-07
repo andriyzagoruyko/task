@@ -86,7 +86,7 @@ export const AssetCard: React.FC<IAsset> = ({
               spacing={1}
               style={{ padding: 5 }}
             >
-              <Typography variant="caption" component="div" >
+              <Typography variant="caption" component="div">
                 Type: {type}
               </Typography>
               <Typography variant="caption" component="div">
@@ -121,6 +121,7 @@ const useStyles = createUseStyles({
   assetPreview: {
     maxWidth: 100,
     width: "100%",
+    padding: "10px",
   },
   assetText: {
     padding: "10px",

@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { IRow } from "../../Rows";
+import { IRow } from "../Rows";
 import { ApiRouteEnum } from "../../../definitions/api-routes";
 import { makeRequest } from "../../../helpers/makeRequest";
 
 const URL_REGEX =
   /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
 
-const EMPTY_ROW = {
+export const EMPTY_ROW = {
   fileUrl: "",
   lang: "",
   isLinkValid: false,
@@ -54,11 +54,15 @@ export const useRows = () => {
     }).finally(() => setIsLoading(false));
   };
 
-  const createAssetsFromRows = async (userId: string) => {
+  const createAssetsFromRows = async (userId: string | null) => {
     for (const row of rows) {
       try {
+        if (!userId) {
+          throw new Error("Connection issue, please try again");
+        }
         await createSingleAsset(row, userId);
         setHasAddedAssets(true);
+        setRows([EMPTY_ROW]);
       } catch (e: any) {
         const message = e.response?.data?.message ?? e.message;
         setError(message);

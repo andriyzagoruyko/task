@@ -25,6 +25,8 @@ export class ImageProcessingConsumer {
     routingKey: ImageRoutesEnum.RECOGNIZE,
   })
   async processImageEvent({ fileUrl, lang, userId }: EnqueueFileDto) {
+    console.log('-----------------------------');
+
     const name = this.httpService.getUrlFileName(fileUrl);
     const file = await this.fileService.createFile({
       name,

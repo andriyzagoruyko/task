@@ -22,4 +22,27 @@ export class FileService {
   updateFile(id: number, fileData: DeepPartial<FileEntity>) {
     return this.fileRepository.update(id, fileData);
   }
+
+  async getStats() {
+    return {
+      ...(await this.getTotalSizeForPastMonth()),
+      ...(await this.getAssetsCountForPastMonth()),
+    };
+  }
+
+  async getTotalSizeForPastMonth() {
+    return await this.fileRepository
+      .createQueryBuilder()
+      .select('SUM(size) as totalSize')
+      .where('created_at > (NOW() - INTERVAL 1 MONTH)')
+      .getRawOne();
+  }
+
+  async getAssetsCountForPastMonth() {
+    return await this.fileRepository
+      .createQueryBuilder()
+      .select('COUNT(id) as count')
+      .where('created_at > (NOW() - INTERVAL 1 MONTH)')
+      .getRawOne();
+  }
 }
