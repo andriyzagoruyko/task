@@ -31,7 +31,9 @@ export class ImageProcessingConsumer {
       const image = await this.httpService.downloadFile(
         file.url,
         (progress: number) => {
-          this.websocketService.sendProgressToUser(socketId, progress);
+          if (socketId) {
+            this.websocketService.sendProgressToUser(socketId, progress);
+          }
         },
       );
 

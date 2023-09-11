@@ -79,13 +79,16 @@ export class FileService {
         return this.createFile({ lang, url, status, error });
         //throw new InternalServerErrorException(error);
       });
+    console.log('File created', file.isImage);
 
-    if (file.isImage) {
+    if (file.type === FileTypeEnum.IMAGE) {
       this.queueService.publishToImageTopic({ fileId: file.id, socketId });
+      console.log('Published to image queue', file.id);
     }
 
-    if (file.isAudio) {
+    if (file.type === FileTypeEnum.AUDIO) {
       this.queueService.publishToImageTopic({ fileId: file.id, socketId });
+      console.log('Published to audio queue', file.id);
     }
 
     return file;

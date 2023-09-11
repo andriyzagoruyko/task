@@ -17,7 +17,7 @@ export class EnqueueFileInput {
   @Field()
   lang!: string;
 
-  @JoiSchema(Joi.string().required())
-  @Field()
-  socketId!: string;
+  @JoiSchema(Joi.string())
+  @Field({ nullable: true })
+  socketId?: string;
 }

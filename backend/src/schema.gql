@@ -25,5 +25,5 @@ type Mutation {
 input EnqueueFileInput {
   url: String!
   lang: String!
-  socketId: String!
+  socketId: String
 }
