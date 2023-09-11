@@ -24,32 +24,19 @@ export class ImageProcessingConsumer {
     exchange: RABBITMQ_IMAGE_TOPIC,
     routingKey: ImageRoutesEnum.RECOGNIZE,
   })
-  async processImageEvent({ fileUrl, lang, userId }: EnqueueFileDto) {
-    console.log('-----------------------------');
-
-    const name = this.httpService.getUrlFileName(fileUrl);
-    const file = await this.fileService.createFile({
-      name,
-      lang,
-      url: fileUrl,
-      type: FileTypeEnum.IMAGE,
-      status: FileStatusEnum.PROCESSING,
-    });
-    const handleDownloadProgress = (progress: number) => {
-      this.websocketService.sendProgressToUser(userId, progress);
-    };
+  async processImageEvent({ fileId, socketId }: EnqueueFileDto) {
+    const file = await this.fileService.findOne(fileId);
     try {
-      const size = await this.httpService.getContentLength(fileUrl);
-      await this.fileService.updateFile(file.id, { size });
-
-      this.logger.log(`Downloading file ${name}`);
+      this.logger.log(`Downloading file ${file.name}`);
       const image = await this.httpService.downloadFile(
-        fileUrl,
-        handleDownloadProgress,
+        file.url,
+        (progress: number) => {
+          this.websocketService.sendProgressToUser(socketId, progress);
+        },
       );
 
       this.logger.log(`Recognizing text`);
-      const text = await this.recognizeImageText(image, lang);
+      const text = await this.recognizeImageText(image, file.lang);
       await this.fileService.updateFile(file.id, {
         text,
         status: FileStatusEnum.READY,

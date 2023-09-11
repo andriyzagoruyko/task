@@ -21,22 +21,9 @@ export class AudioProcessingConsumer {
     exchange: RABBITMQ_AUDIO_TOPIC,
     routingKey: AudioRoutesEnum.RECOGNIZE,
   })
-  async processAudioEvent({ fileUrl, lang }: EnqueueFileDto) {
-    const name = this.httpService.getUrlFileName(fileUrl);
-    const file = await this.fileService.createFile({
-      name,
-      lang,
-      url: fileUrl,
-      type: FileTypeEnum.AUDIO,
-      status: FileStatusEnum.SAVED,
+  async processAudioEvent({ fileId }: EnqueueFileDto) {
+    await this.fileService.updateFile(fileId, {
+      status: FileStatusEnum.READY,
     });
-    try {
-      const size = await this.httpService.getContentLength(fileUrl);
-      await this.fileService.updateFile(file.id, { name, size });
-    } catch (e) {
-      const error = String(e);
-      await this.fileService.updateFile(file.id, { error });
-      this.logger.error(`Exception occurred during processing audio: ${error}`);
-    }
   }
 }

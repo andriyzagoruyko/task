@@ -1,6 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import * as http from 'http';
 import * as https from 'https';
+import { SUPPORTED_AUDIO_TYPES, SUPPORTED_IMAGE_TYPES } from 'src/definitions';
+import { FileTypeEnum } from '../file/enums/file-type.enum';
 
 @Injectable()
 export class HttpService {
@@ -41,27 +43,37 @@ export class HttpService {
       });
     });
   }
-  getUrlFileName(url: string) {
-    return url.split('/').pop();
-  }
 
-  async getContentType(url: string): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-      this.request(url, (res) => resolve(res.headers['content-type']), reject);
-    });
-  }
-
-  async getContentLength(url: string) {
-    return new Promise<number>((resolve, reject) => {
+  async getFileProperties(url: string): Promise<{
+    size: number;
+    type: FileTypeEnum;
+    name: string;
+  }> {
+    return new Promise<any>((resolve, reject) => {
       this.request(
         url,
-        (res) => resolve(Number(res.headers['content-length'])),
+        (res) => {
+          const name = url.split('/').pop();
+          const size = Number(res.headers['content-length']);
+          const contentType = res.headers['content-type'];
+          const type = this.getFIleTypeFromContentType(contentType);
+
+          if (type === null) {
+            return reject(
+              new BadRequestException(
+                `Extension ${contentType} is not supported`,
+              ),
+            );
+          }
+
+          resolve({ size, type, name });
+        },
         reject,
       );
     });
   }
 
-  async request(
+  request(
     url: string,
     onResponse: (res: http.IncomingMessage) => void,
     onError: (err: unknown) => void,
@@ -75,7 +87,6 @@ export class HttpService {
       if (response.statusCode === 200) {
         return onResponse(response);
       }
-
       return onError(
         new Error(`File is not accessible, status: ${response.statusCode}`),
       );
@@ -90,5 +101,17 @@ export class HttpService {
       req.destroy();
       onError(e);
     });
+  }
+
+  getFIleTypeFromContentType(contentType: string) {
+    if (SUPPORTED_IMAGE_TYPES.includes(contentType)) {
+      return FileTypeEnum.IMAGE;
+    }
+
+    if (SUPPORTED_AUDIO_TYPES.includes(contentType)) {
+      return FileTypeEnum.AUDIO;
+    }
+
+    return null;
   }
 }

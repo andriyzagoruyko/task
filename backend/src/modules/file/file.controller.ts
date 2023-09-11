@@ -7,7 +7,7 @@ export class FileController {
 
   @Get()
   getFiles() {
-    return this.fileService.getFiles();
+    return this.fileService.findAll();
   }
 
   @Get('stats')

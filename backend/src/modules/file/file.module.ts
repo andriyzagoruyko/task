@@ -1,13 +1,19 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { FileService } from './file.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FileEntity } from './entities/file.entity';
-import { HttpModule } from '@nestjs/axios';
 import { FileController } from './file.controller';
+import { FileResolver } from './file.resolver';
+import { QueueModule } from '../queue/queue.module';
+import { HttpModule } from '../http/http.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([FileEntity]), HttpModule],
-  providers: [FileService],
+  imports: [
+    TypeOrmModule.forFeature([FileEntity]),
+    HttpModule,
+    forwardRef(() => QueueModule),
+  ],
+  providers: [FileService, FileResolver],
   exports: [FileService],
   controllers: [FileController],
 })

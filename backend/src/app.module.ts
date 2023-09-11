@@ -10,6 +10,9 @@ import { MIGRATION_TABLE_NAME, ENTITIES_PATHS } from './definitions';
 import { QueueModule } from './modules/queue/queue.module';
 import { HttpModule } from './modules/http/http.module';
 import { WebsocketModule } from './modules/websocket/websocket.module';
+import { ApolloDriverConfig, ApolloDriver } from '@nestjs/apollo';
+import { GraphQLModule } from '@nestjs/graphql';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -36,6 +39,11 @@ import { WebsocketModule } from './modules/websocket/websocket.module';
         logging: ['error'],
       }),
       inject: [ConfigService],
+    }),
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      playground: true,
     }),
     HttpModule,
     WebsocketModule,
