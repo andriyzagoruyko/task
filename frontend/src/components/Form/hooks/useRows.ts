@@ -1,13 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IRow } from "../Rows";
-import { ApiRouteEnum } from "../../../definitions/api-routes";
-import { makeRequest } from "../../../helpers/makeRequest";
+import { useMutation } from "@apollo/client";
+import { ALL_FILES, ENQUEUE_FILE } from "../../../apollo/file";
+import { IAsset } from "../../Assets/AssetCard";
 
 const URL_REGEX =
-  /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
+  /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gi;
 
-export const EMPTY_ROW = {
-  fileUrl: "",
+export const EMPTY_ROW: IRow = {
+  url: "",
   lang: "",
   isLinkValid: false,
   isLangValid: false,
@@ -17,8 +18,18 @@ export const EMPTY_ROW = {
 export const useRows = () => {
   const [rows, setRows] = useState<IRow[]>([EMPTY_ROW]);
   const [hasAddedAssets, setHasAddedAssets] = useState(false);
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [enqueueFile, { loading, error }] = useMutation(ENQUEUE_FILE, {
+    update: (cache, { data: { newAsset } }) => {
+      const { assets } = cache.readQuery({ query: ALL_FILES }) as {
+        assets: IAsset[];
+      };
+      cache.writeQuery({
+        query: ALL_FILES,
+        data: { assets: [newAsset, ...assets] },
+      });
+    },
+  });
 
   const updateRow = (index: number, updatedItem: IRow) => {
     const nextItems = [...rows];
@@ -31,7 +42,7 @@ export const useRows = () => {
     const nextItems = [...rows];
     nextItems[index] = {
       ...item,
-      isLinkValid: !!item.fileUrl.match(URL_REGEX),
+      isLinkValid: !!item.url.match(URL_REGEX),
       isLangValid: !!item.lang,
       isTouched: true,
     };
@@ -39,34 +50,20 @@ export const useRows = () => {
   };
 
   const addRow = () => {
-    setRows([...rows, EMPTY_ROW]);
+    setRows([...rows, { ...EMPTY_ROW, lang: rows[rows.length - 1].lang }]);
     setHasAddedAssets(false);
   };
 
-  const createSingleAsset = async (row: IRow, userId: string) => {
-    const { fileUrl, lang } = row;
-    setError("");
-    setIsLoading(true);
-    await makeRequest(ApiRouteEnum.ENQUEUE_FILE, "POST", {
-      fileUrl,
-      lang,
-      userId,
-    }).finally(() => setIsLoading(false));
+  const createSingleAsset = async (row: IRow, socketId: string | null) => {
+    const { url, lang } = row;
+    await enqueueFile({ variables: { url, lang, socketId } });
   };
 
-  const createAssetsFromRows = async (userId: string | null) => {
+  const createAssetsFromRows = async (socketId: string | null) => {
     for (const row of rows) {
-      try {
-        if (!userId) {
-          throw new Error("Connection issue, please try again");
-        }
-        await createSingleAsset(row, userId);
-        setHasAddedAssets(true);
-        setRows([EMPTY_ROW]);
-      } catch (e: any) {
-        const message = e.response?.data?.message ?? e.message;
-        setError(message);
-      }
+      await createSingleAsset(row, socketId);
+      setHasAddedAssets(true);
+      setRows([EMPTY_ROW]);
     }
   };
 
@@ -75,6 +72,14 @@ export const useRows = () => {
       setRows(rows.filter((_, i) => i !== index));
     }
   };
+
+  useEffect(() => {
+    if (error) {
+      setErrorMessage(error?.message);
+    }
+  }, [error]);
+
+  const cleanErrorMessage = () => setErrorMessage("");
 
   return {
     rows,
@@ -86,9 +91,8 @@ export const useRows = () => {
     deleteRow,
     createSingleAsset,
     createAssetsFromRows,
-    error,
-    setError,
-    isLoading,
-    setIsLoading,
+    cleanErrorMessage,
+    errorMessage,
+    loading,
   };
 };

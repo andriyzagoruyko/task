@@ -28,7 +28,7 @@ export class FileEntity {
   lang!: string;
 
   @Column({ type: 'text', nullable: true })
-  @Field()
+  @Field({ nullable: true })
   text!: string | null;
 
   @Column({ type: 'varchar', length: 255 })
@@ -40,7 +40,7 @@ export class FileEntity {
   type!: FileTypeEnum;
 
   @Column({ type: 'integer', nullable: true })
-  //@Field((type) => Int)
+  @Field(() => Int, { nullable: true })
   size!: number;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
@@ -52,6 +52,7 @@ export class FileEntity {
     default: () => 'CURRENT_TIMESTAMP',
     nullable: false,
   })
+  @Field()
   createdAt!: string;
 
   @CreateDateColumn({
@@ -59,15 +60,8 @@ export class FileEntity {
     default: () => 'CURRENT_TIMESTAMP',
     nullable: false,
   })
+  @Field()
   updatedAt!: string;
-
-  get isImage(): boolean {
-    return this.type === FileTypeEnum.IMAGE;
-  }
-
-  get isAudio(): boolean {
-    return this.type === FileTypeEnum.AUDIO;
-  }
 }
 
 export type GroupedImageEntity = FileEntity & { count?: number };

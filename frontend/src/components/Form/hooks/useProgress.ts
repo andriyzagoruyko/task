@@ -5,10 +5,10 @@ const socket = io("localhost", { path: "/api/socket.io" });
 
 export const useProgress = () => {
   const [progress, setProgress] = useState(0);
-  const [userId, setUserId] = useState<null | string>(null);
+  const [socketId, setSocketId] = useState<null | string>(null);
 
   useEffect(() => {
-    const onConnect = () => setUserId(socket.id);
+    const onConnect = () => setSocketId(socket.id);
     const onProgress = (data: { progress: number }) =>
       setProgress(data.progress);
 
@@ -28,5 +28,5 @@ export const useProgress = () => {
     setTimeout(clearProgress, 500);
   }, [progress]);
 
-  return { progress, userId };
+  return { progress, socketId };
 };

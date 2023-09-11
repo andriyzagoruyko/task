@@ -47,13 +47,11 @@ export class HttpService {
   async getFileProperties(url: string): Promise<{
     size: number;
     type: FileTypeEnum;
-    name: string;
   }> {
     return new Promise<any>((resolve, reject) => {
       this.request(
         url,
         (res) => {
-          const name = url.split('/').pop();
           const size = Number(res.headers['content-length']);
           const contentType = res.headers['content-type'];
           const type = this.getFIleTypeFromContentType(contentType);

@@ -16,22 +16,23 @@ export function Form() {
     hasAddedAssets,
     addRow,
     deleteRow,
-    error,
-    setError,
-    isLoading,
+    errorMessage,
+    cleanErrorMessage,
+    loading,
     createAssetsFromRows,
   } = useRows();
 
-  const { progress, userId } = useProgress();
+  const { progress, socketId } = useProgress();
   const hasValidRows = rows.every((row) => row.isLinkValid && row.isLangValid);
 
   const handleLinkChange = (index: number, fileLink: string) =>
-    updateRow(index, { ...rows[index], fileUrl: fileLink });
+    updateRow(index, { ...rows[index], url: fileLink });
+
   const handleLangChange = (index: number, lang: string) =>
     updateRow(index, { ...rows[index], lang });
-  const handleCloseSnackbar = () => setError("");
-  const handleSubmitClick = () => createAssetsFromRows(userId)
-  
+
+  const handleSubmitClick = () => createAssetsFromRows(socketId);
+
   return (
     <>
       <ProgressBar progress={progress} />
@@ -52,7 +53,7 @@ export function Form() {
               variant="contained"
               color="primary"
               onClick={handleSubmitClick}
-              disabled={isLoading}
+              disabled={loading}
             >
               Send
             </Button>
@@ -70,10 +71,10 @@ export function Form() {
         </Stack>
       </Box>
       <Snackbar
-        open={!!error}
+        open={!!errorMessage}
         autoHideDuration={2000}
-        onClose={handleCloseSnackbar}
-        message={error}
+        onClose={cleanErrorMessage}
+        message={errorMessage}
       />
       {!!hasAddedAssets && (
         <Paper className={styles.successMessage}>

@@ -7,8 +7,6 @@ import { DeepPartial } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileEntity } from './entities/file.entity';
 import { Repository } from 'typeorm';
-import { SUPPORTED_IMAGE_TYPES, SUPPORTED_AUDIO_TYPES } from 'src/definitions';
-import { EnqueueFileDto } from '../queue/dto/enqueue-file.dto';
 import { HttpService } from '../http/http.service';
 import { QueueService } from '../queue/queue.service';
 import { EnqueueFileInput } from './dto/enqueue-file.input';
@@ -25,11 +23,14 @@ export class FileService {
   ) {}
 
   findAll() {
-    return this.fileRepository.createQueryBuilder().getMany();
+    return this.fileRepository
+      .createQueryBuilder()
+      .orderBy('created_at', 'DESC')
+      .getMany();
   }
 
   findOne(id: number) {
-    return this.fileRepository.findOneBy({ id });
+    return this.fileRepository.findOneByOrFail({ id });
   }
 
   createFile(fileData: DeepPartial<FileEntity>) {
@@ -40,14 +41,14 @@ export class FileService {
     return this.fileRepository.update(id, fileData);
   }
 
-  async getStats() {
+  async getStats(): Promise<{ totalSize: number; count: number }> {
     return {
       ...(await this.getTotalSizeForPastMonth()),
       ...(await this.getAssetsCountForPastMonth()),
     };
   }
 
-  async getTotalSizeForPastMonth() {
+  private async getTotalSizeForPastMonth() {
     return await this.fileRepository
       .createQueryBuilder()
       .select('SUM(size) as totalSize')
@@ -55,7 +56,7 @@ export class FileService {
       .getRawOne();
   }
 
-  async getAssetsCountForPastMonth() {
+  private async getAssetsCountForPastMonth() {
     return await this.fileRepository
       .createQueryBuilder()
       .select('COUNT(id) as count')
@@ -64,9 +65,10 @@ export class FileService {
   }
 
   async enqueueFile({ url, lang, socketId }: EnqueueFileInput) {
+    const name = this.getUrlFilename(url);
     const file = await this.httpService
       .getFileProperties(url)
-      .then(({ name, type, size }) => {
+      .then(({ type, size }) => {
         const status = FileStatusEnum.SAVED;
         return this.createFile({ name, lang, url, type, size, status });
       })
@@ -74,12 +76,10 @@ export class FileService {
         if (err instanceof BadRequestException) {
           throw err;
         }
-        const error = String(err);
-        const status = FileStatusEnum.FAILED;
-        return this.createFile({ lang, url, status, error });
-        //throw new InternalServerErrorException(error);
+        throw new InternalServerErrorException(String(err));
       });
-    console.log('File created', file.isImage);
+
+    console.log('File created', file);
 
     if (file.type === FileTypeEnum.IMAGE) {
       this.queueService.publishToImageTopic({ fileId: file.id, socketId });
@@ -92,5 +92,9 @@ export class FileService {
     }
 
     return file;
+  }
+
+  getUrlFilename(url: string) {
+    return url.split('/').pop();
   }
 }

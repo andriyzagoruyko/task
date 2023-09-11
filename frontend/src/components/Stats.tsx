@@ -1,9 +1,8 @@
 import { Paper } from "@material-ui/core";
 import { Alert, AlertTitle } from "@mui/material";
-import { useEffect, useState } from "react";
 import { createUseStyles } from "react-jss";
-import { ApiRouteEnum } from "../definitions/api-routes";
-import { makeRequest } from "../helpers/makeRequest";
+import { useQuery } from "@apollo/client";
+import { STATS } from "../apollo/file";
 
 interface IStats {
   totalSize: number;
@@ -14,20 +13,17 @@ const bytesToMegabytes = (bytes: number) => (bytes / 1000000).toFixed(3);
 
 export function Stats() {
   const styles = useStyles();
-  const [stats, setStats] = useState<IStats>({ totalSize: 0, count: 0 });
-
-  useEffect(() => {
-    makeRequest(ApiRouteEnum.STATS, "GET").then(setStats).catch(console.log);
-  }, [setStats]);
+  const { data } = useQuery<{ stats: IStats }>(STATS);
 
   return (
     <Paper className={styles.wrapper}>
       <Alert severity="info">
         <AlertTitle>Stats</AlertTitle>
         Data processed for the past month —{" "}
-        <strong>{bytesToMegabytes(stats.totalSize)} MB</strong> <br />
+        <strong>{bytesToMegabytes(data?.stats?.totalSize ?? 0)} MB</strong>{" "}
+        <br />
         Assets quantity for the past month —{" "}
-        <strong>{stats.count} items</strong>
+        <strong>{data?.stats?.count ?? 0} items</strong>
       </Alert>
     </Paper>
   );

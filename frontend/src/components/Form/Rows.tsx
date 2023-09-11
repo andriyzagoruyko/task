@@ -1,11 +1,11 @@
-import { IconButton, Paper, TextField, Typography } from "@material-ui/core";
+import { IconButton, Paper, TextField } from "@material-ui/core";
 import { Stack, Autocomplete } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { createUseStyles } from "react-jss";
 import { AVAILABLE_LANGUAGES } from "../../definitions/available-languages";
 
 export interface IRow {
-  fileUrl: string;
+  url: string;
   lang: string;
   isLinkValid: boolean;
   isLangValid: boolean;
@@ -45,7 +45,7 @@ export const Rows = ({
                   ? "Link is not valid"
                   : "File link"
               }
-              value={row.fileUrl}
+              value={row.url}
               onChange={({ target }) => onLinkChange(index, target.value)}
             />
             <Autocomplete

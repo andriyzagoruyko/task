@@ -2,17 +2,14 @@ import { Resolver, Query, Args, ID, Mutation } from '@nestjs/graphql';
 import { FileService } from './file.service';
 import { FileEntity } from './entities/file.entity';
 import { EnqueueFileInput } from './dto/enqueue-file.input';
-import { QueueService } from '../queue/queue.service';
+import { StatsModel } from './models/stats.model';
 
 @Resolver(() => FileEntity)
 export class FileResolver {
-  constructor(
-    private readonly fileService: FileService,
-    private readonly queueService: QueueService,
-  ) {}
+  constructor(private readonly fileService: FileService) {}
 
   @Query(() => [FileEntity])
-  files() {
+  allFiles() {
     return this.fileService.findAll();
   }
 
@@ -24,5 +21,10 @@ export class FileResolver {
   @Mutation(() => FileEntity)
   enqueueFile(@Args('enqueueFileInput') enqueueFileInput: EnqueueFileInput) {
     return this.fileService.enqueueFile(enqueueFileInput);
+  }
+
+  @Query(() => StatsModel)
+  stats() {
+    return this.fileService.getStats();
   }
 }

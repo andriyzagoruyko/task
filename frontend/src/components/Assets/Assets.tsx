@@ -1,35 +1,15 @@
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  CardMedia,
-  IconButton,
-  Paper,
-  TextField,
-  Typography,
-} from "@material-ui/core";
+import { Box, Typography } from "@material-ui/core";
 import { createUseStyles } from "react-jss";
 import { AssetCard, IAsset } from "./AssetCard";
-import { ApiRouteEnum } from "../../definitions/api-routes";
-import { useEffect, useState } from "react";
-import { makeRequest } from "../../helpers/makeRequest";
 import { Stats } from "../Stats";
+import { useQuery } from "@apollo/client";
+import { ALL_FILES } from "../../apollo/file";
 
 export function Assets() {
-  const [assets, setAssets] = useState<IAsset[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    makeRequest(ApiRouteEnum.FILES, "GET")
-      .then(setAssets)
-      .catch(console.log)
-      .finally(() => setIsLoading(false));
-  }, [setAssets]);
-
+  const { loading, data } = useQuery<{ assets: IAsset[] }>(ALL_FILES);
   const styles = useStyles();
 
-  if (isLoading) {
+  if (loading) {
     return (
       <Box className={styles.container}>
         <Typography variant="h4" style={{ textAlign: "center" }}>
@@ -39,7 +19,7 @@ export function Assets() {
     );
   }
 
-  if (!assets.length && !isLoading) {
+  if (!data?.assets?.length && !loading) {
     return (
       <Box className={styles.container}>
         <Typography variant="h4" style={{ textAlign: "center" }}>
@@ -56,8 +36,8 @@ export function Assets() {
       </Typography>
       <Stats />
       <Box className={styles.assetWrapper}>
-        {!assets ? <Typography>loading</Typography> : null}
-        {assets?.map((asset) => (
+        {loading ? <Typography>loading</Typography> : null}
+        {data?.assets?.map((asset: IAsset) => (
           <Box className={styles.assetWrapper}>
             <AssetCard {...asset} />
           </Box>

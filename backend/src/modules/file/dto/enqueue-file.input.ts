@@ -1,7 +1,7 @@
 import * as Joi from 'joi';
 import { JoiSchema } from 'nestjs-joi';
 import { AVAILABLE_LANGUAGES } from 'src/definitions';
-import { Field, ObjectType, Int, InputType } from '@nestjs/graphql';
+import { Field, ObjectType, ID, InputType } from '@nestjs/graphql';
 
 @InputType()
 export class EnqueueFileInput {
@@ -18,6 +18,6 @@ export class EnqueueFileInput {
   lang!: string;
 
   @JoiSchema(Joi.string())
-  @Field({ nullable: true })
+  @Field(() => ID, { nullable: true })
   socketId?: string;
 }

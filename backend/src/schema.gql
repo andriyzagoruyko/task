@@ -7,15 +7,24 @@ type FileEntity {
   status: String!
   name: String!
   lang: String!
-  text: String!
+  text: String
   url: String!
   type: String!
+  size: Int
   error: String
+  createdAt: String!
+  updatedAt: String!
+}
+
+type StatsModel {
+  totalSize: Int!
+  count: Int!
 }
 
 type Query {
-  files: [FileEntity!]!
+  allFiles: [FileEntity!]!
   file(id: ID!): FileEntity!
+  stats: StatsModel!
 }
 
 type Mutation {
@@ -25,5 +34,5 @@ type Mutation {
 input EnqueueFileInput {
   url: String!
   lang: String!
-  socketId: String
+  socketId: ID
 }
