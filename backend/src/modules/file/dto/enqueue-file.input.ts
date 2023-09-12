@@ -1,7 +1,7 @@
 import * as Joi from 'joi';
 import { JoiSchema } from 'nestjs-joi';
 import { AVAILABLE_LANGUAGES } from 'src/definitions';
-import { Field, ObjectType, ID, InputType } from '@nestjs/graphql';
+import { Field, ID, InputType } from '@nestjs/graphql';
 
 @InputType()
 export class EnqueueFileInput {

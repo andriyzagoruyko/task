@@ -56,14 +56,20 @@ export const useRows = () => {
 
   const createSingleAsset = async (row: IRow, socketId: string | null) => {
     const { url, lang } = row;
-    await enqueueFile({ variables: { url, lang, socketId } });
+    try {
+      return await enqueueFile({ variables: { url, lang, socketId } });
+    } catch {}
+    return null;
   };
 
   const createAssetsFromRows = async (socketId: string | null) => {
+    setHasAddedAssets(false);
     for (const row of rows) {
-      await createSingleAsset(row, socketId);
-      setHasAddedAssets(true);
-      setRows([EMPTY_ROW]);
+      const res = await createSingleAsset(row, socketId);
+      if (res) {
+        setHasAddedAssets(true);
+        setRows([EMPTY_ROW]);
+      }
     }
   };
 

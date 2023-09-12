@@ -1,10 +1,8 @@
 version: "2.4"
 
 volumes:
-  mysqldata_db: {}
   mysqldata_backend: {}
-  mysqldata_acl: {}
-  mysqldata_files: {}
+  mongo_backend: {}
 
 services:
   proxy:
@@ -30,6 +28,7 @@ services:
       - proxy
       - backend-db
       - rabbitmq
+      - mongodb
     group_add:
       - "${DOCKER_GROUP_ID}"
     ports:
@@ -91,3 +90,13 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: app
       RABBITMQ_DEFAULT_PASS: app
+
+  mongodb:
+    image: mongo:7.0
+    hostname: mongodb
+    restart: always
+    ports:
+      - '27017:27017'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: app
+      MONGO_INITDB_ROOT_PASSWORD: app      

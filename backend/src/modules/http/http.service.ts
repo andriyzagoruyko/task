@@ -12,7 +12,7 @@ export class HttpService {
   ): Promise<Buffer> {
     return new Promise((resolve, reject) => {
       const req = https.get(url, { timeout: 3000 }, (res) => {
-        const totalBytes = Number(res.headers['content-length']);
+        const totalBytes = Number(res.headers['content-length'] || 0);
         const data = [];
         let receivedBytes = 0;
         res.on('readable', function () {
@@ -52,7 +52,7 @@ export class HttpService {
       this.request(
         url,
         (res) => {
-          const size = Number(res.headers['content-length']);
+          const size = Number(res.headers['content-length'] || 0);
           const contentType = res.headers['content-type'];
           const type = this.getFIleTypeFromContentType(contentType);
 
@@ -64,7 +64,7 @@ export class HttpService {
             );
           }
 
-          resolve({ size, type, name });
+          resolve({ size, type });
         },
         reject,
       );
@@ -77,8 +77,8 @@ export class HttpService {
     onError: (err: unknown) => void,
   ) {
     const req = url.startsWith('https://')
-      ? https.get(url, { timeout: 3000 })
-      : http.get(url, { timeout: 3000 });
+      ? https.get(url, { timeout: 30000 })
+      : http.get(url, { timeout: 30000 });
 
     req.once('response', (response) => {
       req.destroy();

@@ -2,7 +2,7 @@ import { Resolver, Query, Args, ID, Mutation } from '@nestjs/graphql';
 import { FileService } from './file.service';
 import { FileEntity } from './entities/file.entity';
 import { EnqueueFileInput } from './dto/enqueue-file.input';
-import { StatsModel } from './models/stats.model';
+import { StatsDto } from './dto/stats.dto';
 
 @Resolver(() => FileEntity)
 export class FileResolver {
@@ -23,7 +23,7 @@ export class FileResolver {
     return this.fileService.enqueueFile(enqueueFileInput);
   }
 
-  @Query(() => StatsModel)
+  @Query(() => StatsDto)
   stats() {
     return this.fileService.getStats();
   }

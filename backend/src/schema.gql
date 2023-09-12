@@ -16,7 +16,7 @@ type FileEntity {
   updatedAt: String!
 }
 
-type StatsModel {
+type StatsDto {
   totalSize: Int!
   count: Int!
 }
@@ -24,7 +24,7 @@ type StatsModel {
 type Query {
   allFiles: [FileEntity!]!
   file(id: ID!): FileEntity!
-  stats: StatsModel!
+  stats: StatsDto!
 }
 
 type Mutation {

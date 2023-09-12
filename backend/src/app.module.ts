@@ -13,6 +13,7 @@ import { WebsocketModule } from './modules/websocket/websocket.module';
 import { ApolloDriverConfig, ApolloDriver } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
@@ -44,6 +45,19 @@ import { join } from 'path';
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       playground: true,
+    }),
+    MongooseModule.forRootAsync({
+      useFactory: (config: ConfigService) => {
+        return {
+          dbName: config.queueDatabase.name,
+          auth: {
+            username: config.queueDatabase.user,
+            password: config.queueDatabase.pass,
+          },
+          uri: `mongodb://${config.queueDatabase.host}:${config.queueDatabase.port}`,
+        };
+      },
+      inject: [ConfigService],
     }),
     HttpModule,
     WebsocketModule,

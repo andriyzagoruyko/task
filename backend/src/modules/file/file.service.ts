@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FileEntity } from './entities/file.entity';
 import { Repository } from 'typeorm';
 import { HttpService } from '../http/http.service';
-import { QueueService } from '../queue/queue.service';
+import { QueueService } from '../queue/services/queue.service';
 import { EnqueueFileInput } from './dto/enqueue-file.input';
 import { FileTypeEnum } from './enums/file-type.enum';
 import { FileStatusEnum } from './enums/file-status.enum';
@@ -82,12 +82,12 @@ export class FileService {
     console.log('File created', file);
 
     if (file.type === FileTypeEnum.IMAGE) {
-      this.queueService.publishToImageTopic({ fileId: file.id, socketId });
+      await this.queueService.publishImageRecognitionTask(file.id, socketId);
       console.log('Published to image queue', file.id);
     }
 
     if (file.type === FileTypeEnum.AUDIO) {
-      this.queueService.publishToImageTopic({ fileId: file.id, socketId });
+      await this.queueService.publishAudioRecognitionTask(file.id, socketId);
       console.log('Published to audio queue', file.id);
     }
 

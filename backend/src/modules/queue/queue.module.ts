@@ -1,6 +1,6 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { ConfigService } from 'src/config/config.service';
-import { QueueService } from './queue.service';
+import { QueueService } from './services/queue.service';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { ImageProcessingConsumer } from './consumers/image-processing.consumer';
 import { FileModule } from '../file/file.module';
@@ -9,6 +9,12 @@ import { AudioProcessingConsumer } from './consumers/audio-processing.consumer';
 import { HttpModule } from '../http/http.module';
 import { WebsocketModule } from '../websocket/websocket.module';
 import { QueueResolver } from './queue.resolver';
+import { MongooseModule } from '@nestjs/mongoose';
+import {
+  RecognitionTask,
+  RecognitionTaskSchema,
+} from './schemas/recognition-task.schema';
+import { RecognitionTaskService } from './services/recognition-task.service';
 
 @Module({
   imports: [
@@ -19,12 +25,16 @@ import { QueueResolver } from './queue.resolver';
       useFactory: RabbitMQFactory,
       inject: [ConfigService],
     }),
+    MongooseModule.forFeature([
+      { name: RecognitionTask.name, schema: RecognitionTaskSchema },
+    ]),
   ],
   providers: [
     QueueService,
     ImageProcessingConsumer,
     AudioProcessingConsumer,
     QueueResolver,
+    RecognitionTaskService,
   ],
   exports: [QueueService],
 })

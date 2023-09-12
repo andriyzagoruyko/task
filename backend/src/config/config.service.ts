@@ -18,6 +18,14 @@ const CONFIG_SCHEMA = Joi.object({
     ssl: Joi.boolean().required(),
   }),
 
+  queueDatabase: Joi.object().keys({
+    host: Joi.string().required(),
+    port: Joi.number().required(),
+    name: Joi.string().required(),
+    user: Joi.string().required(),
+    pass: Joi.string().required(),
+  }),
+
   rabbitMq: Joi.object().keys({
     host: Joi.string().required(),
     port: Joi.number().required(),
@@ -38,6 +46,14 @@ export class ConfigService {
     name: process.env.APP_BACKEND_DB_NAME || 'app',
     maxConnections: process.env.APP_BACKEND_MAX_CONNECTIONS || 2,
     ssl: false,
+  };
+
+  queueDatabase = {
+    host: process.env.APP_QUEUE_DB_HOST || 'mongodb',
+    port: Number(process.env.APP_QUEUE_DB_PORT) || 27017,
+    name: process.env.APP_QUEUE_DB_NAME || 'app',
+    user: process.env.APP_QUEUE_DB_USER || 'app',
+    pass: process.env.APP_QUEUE_DB_PASS || 'app',
   };
 
   rabbitMq = {
