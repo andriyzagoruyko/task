@@ -7,6 +7,7 @@ import {
 import { FileStatusEnum } from '../enums/file-status.enum';
 import { FileTypeEnum } from '../enums/file-type.enum';
 import { Field, ObjectType, Int } from '@nestjs/graphql';
+import { RecognitionTaskEntity } from 'src/modules/queue/entities/recognition-task.entity';
 
 @Entity({ name: 'file' })
 @ObjectType()
@@ -62,6 +63,9 @@ export class FileEntity {
   })
   @Field()
   updatedAt!: string;
+
+  @Field({ nullable: true })
+  task?: RecognitionTaskEntity;
 }
 
 export type GroupedImageEntity = FileEntity & { count?: number };

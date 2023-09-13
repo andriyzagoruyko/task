@@ -4,11 +4,11 @@ import { RABBITMQ_IMAGE_TOPIC } from 'src/definitions';
 import { ImageRoutesEnum } from '../enums/image-routes.enum';
 import { EnqueueFileDto } from '../dto/enqueue-file.dto';
 import { FileService } from 'src/modules/file/file.service';
-import { FileTypeEnum } from 'src/modules/file/enums/file-type.enum';
 import { FileStatusEnum } from 'src/modules/file/enums/file-status.enum';
 import { recognize } from 'tesseract.js';
 import { HttpService } from 'src/modules/http/http.service';
 import { WebsocketService } from 'src/modules/websocket/websocket.service';
+import { RecognitionTaskService } from '../services/recognition-task.service';
 
 @Injectable()
 export class ImageProcessingConsumer {
@@ -18,6 +18,7 @@ export class ImageProcessingConsumer {
     private readonly fileService: FileService,
     private readonly httpService: HttpService,
     private readonly websocketService: WebsocketService,
+    private readonly recognitionTaskService: RecognitionTaskService,
   ) {}
 
   @RabbitSubscribe({
@@ -32,11 +33,11 @@ export class ImageProcessingConsumer {
         file.url,
         (progress: number) => {
           if (socketId) {
+            this.recognitionTaskService.updateOneByFileId(fileId, { progress });
             this.websocketService.sendProgressToUser(socketId, progress);
           }
         },
       );
-
       this.logger.log(`Recognizing text`);
       const text = await this.recognizeImageText(image, file.lang);
       await this.fileService.updateFile(file.id, {

@@ -2,6 +2,11 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type RecognitionTaskEntity {
+  fileId: Float!
+  progress: Float!
+}
+
 type FileEntity {
   id: Int!
   status: String!
@@ -14,6 +19,7 @@ type FileEntity {
   error: String
   createdAt: String!
   updatedAt: String!
+  task: RecognitionTaskEntity
 }
 
 type StatsDto {
@@ -35,4 +41,8 @@ input EnqueueFileInput {
   url: String!
   lang: String!
   socketId: ID
+}
+
+type Subscription {
+  recognitionTaskUpdated: RecognitionTaskEntity!
 }

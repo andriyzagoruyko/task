@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { WebsocketGateway } from './websocket.gateway';
 
+import { PubSub } from 'graphql-subscriptions';
+
+
 enum WebsocketEvents {
-  PROGRESS = 'progress',
+  ProgressUpdated = 'progressUpdated',
 }
 
 @Injectable()
@@ -12,6 +15,8 @@ export class WebsocketService {
   sendProgressToUser(userId: string, progress: number | null) {
     this.websocketGateway.wss
       .to(userId)
-      .emit(WebsocketEvents.PROGRESS, { progress });
+      .emit(WebsocketEvents.ProgressUpdated, { progress });
   }
+
+
 }

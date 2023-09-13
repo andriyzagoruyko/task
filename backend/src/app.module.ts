@@ -45,6 +45,16 @@ import { MongooseModule } from '@nestjs/mongoose';
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       playground: true,
+      subscriptions: {
+        'graphql-ws': {
+          onConnect: (ctx) => {
+            console.log('User connected', ctx.connectionParams);
+          },
+          onDisconnect: (webSocket, context) => {
+            // handle disconnection
+          },
+        },
+      },
     }),
     MongooseModule.forRootAsync({
       useFactory: (config: ConfigService) => {

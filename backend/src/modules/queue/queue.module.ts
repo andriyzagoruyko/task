@@ -11,9 +11,9 @@ import { WebsocketModule } from '../websocket/websocket.module';
 import { QueueResolver } from './queue.resolver';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
-  RecognitionTask,
+  RecognitionTaskEntity,
   RecognitionTaskSchema,
-} from './schemas/recognition-task.schema';
+} from './entities/recognition-task.entity';
 import { RecognitionTaskService } from './services/recognition-task.service';
 
 @Module({
@@ -26,7 +26,7 @@ import { RecognitionTaskService } from './services/recognition-task.service';
       inject: [ConfigService],
     }),
     MongooseModule.forFeature([
-      { name: RecognitionTask.name, schema: RecognitionTaskSchema },
+      { name: RecognitionTaskEntity.name, schema: RecognitionTaskSchema },
     ]),
   ],
   providers: [
@@ -36,7 +36,7 @@ import { RecognitionTaskService } from './services/recognition-task.service';
     QueueResolver,
     RecognitionTaskService,
   ],
-  exports: [QueueService],
+  exports: [QueueService, RecognitionTaskService],
 })
 export class QueueModule {}
 

@@ -10,6 +10,9 @@ export const ALL_FILES = gql`
       size
       url
       text
+      task {
+        progress
+      }
     }
   }
 `;
