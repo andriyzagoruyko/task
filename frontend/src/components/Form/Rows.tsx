@@ -29,7 +29,12 @@ export const Rows = ({
   return (
     <>
       {rows.map((row, index) => (
-        <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
+        <Stack
+          direction="row"
+          spacing={2}
+          sx={{ alignItems: "center" }}
+          key={index}
+        >
           <IconButton
             onClick={() => onRowDelete(index)}
             disabled={rows.length <= 1}

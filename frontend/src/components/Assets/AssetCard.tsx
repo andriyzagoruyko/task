@@ -12,6 +12,7 @@ import React from "react";
 import { createUseStyles } from "react-jss";
 
 export interface IAsset {
+  id: number;
   name: string;
   status: FileStatusEnum;
   url: string;

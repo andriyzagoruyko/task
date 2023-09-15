@@ -11,7 +11,9 @@ export const ALL_FILES = gql`
       url
       text
       task {
+        id
         progress
+        fileId
       }
     }
   }
@@ -38,6 +40,16 @@ export const STATS = gql`
     stats {
       totalSize
       count
+    }
+  }
+`;
+
+export const TASK_UPDATED_SUBSCRIPTION = gql`
+  subscription {
+    taskUpdated {
+      id,
+      fileId
+      progress
     }
   }
 `;

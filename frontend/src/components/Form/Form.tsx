@@ -6,7 +6,6 @@ import Snackbar from "@mui/material/Snackbar";
 import { Alert } from "@mui/material";
 import { useRows } from "./hooks/useRows";
 import { ProgressBar } from "../ProgressBar";
-import { useProgress } from "./hooks/useProgress";
 
 export function Form() {
   const styles = useStyles();
@@ -22,7 +21,6 @@ export function Form() {
     createAssetsFromRows,
   } = useRows();
 
-  const { progress, socketId } = useProgress();
   const hasValidRows = rows.every((row) => row.isLinkValid && row.isLangValid);
 
   const handleLinkChange = (index: number, fileLink: string) =>
@@ -31,11 +29,10 @@ export function Form() {
   const handleLangChange = (index: number, lang: string) =>
     updateRow(index, { ...rows[index], lang });
 
-  const handleSubmitClick = () => createAssetsFromRows(socketId);
+  const handleSubmitClick = () => createAssetsFromRows();
 
   return (
     <>
-      <ProgressBar progress={progress} />
       <Box className={styles.formContainer}>
         <Typography variant="h4">Past your link</Typography>
         <Rows
@@ -59,13 +56,15 @@ export function Form() {
             </Button>
           ) : (
             <Tooltip title="All fields should be specified">
-              <Button
-                variant="contained"
-                color="primary"
-                disabled={!hasValidRows}
-              >
-                Send
-              </Button>
+              <div>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  disabled={!hasValidRows}
+                >
+                  Send
+                </Button>
+              </div>
             </Tooltip>
           )}
         </Stack>

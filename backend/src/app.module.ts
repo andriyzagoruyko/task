@@ -4,23 +4,23 @@ import { ConfigService } from './config/config.service';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { ConfigModule } from './config/config.module';
 import migrations from './migration';
-import { JoiPipeModule } from 'nestjs-joi';
+//import { JoiPipeModule } from 'nestjs-joi';
 import { FileModule } from './modules/file/file.module';
 import { MIGRATION_TABLE_NAME, ENTITIES_PATHS } from './definitions';
 import { QueueModule } from './modules/queue/queue.module';
 import { HttpModule } from './modules/http/http.module';
-import { WebsocketModule } from './modules/websocket/websocket.module';
 import { ApolloDriverConfig, ApolloDriver } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
 import { MongooseModule } from '@nestjs/mongoose';
+import { PublisherModule } from './modules/publisher/publisher.module';
 
 @Module({
   imports: [
     QueueModule,
     FileModule,
     ConfigModule,
-    JoiPipeModule.forRoot(),
+    //JoiPipeModule.forRoot(),
     TypeOrmModule.forRootAsync({
       useFactory: (config: ConfigService) => ({
         type: 'mysql',
@@ -45,15 +45,10 @@ import { MongooseModule } from '@nestjs/mongoose';
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       playground: true,
+      installSubscriptionHandlers: true,
       subscriptions: {
-        'graphql-ws': {
-          onConnect: (ctx) => {
-            console.log('User connected', ctx.connectionParams);
-          },
-          onDisconnect: (webSocket, context) => {
-            // handle disconnection
-          },
-        },
+        'graphql-ws': { path: '/subscriptions' },
+        'subscriptions-transport-ws': false,
       },
     }),
     MongooseModule.forRootAsync({
@@ -70,7 +65,7 @@ import { MongooseModule } from '@nestjs/mongoose';
       inject: [ConfigService],
     }),
     HttpModule,
-    WebsocketModule,
+    PublisherModule,
   ],
 })
 export class AppModule {}

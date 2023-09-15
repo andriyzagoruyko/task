@@ -14,14 +14,17 @@ import { EnqueueFileInput } from './dto/enqueue-file.input';
 import { StatsDto } from './dto/stats.dto';
 import { RecognitionTaskEntity } from '../queue/entities/recognition-task.entity';
 import { RecognitionTaskService } from '../queue/services/recognition-task.service';
-import { PubSub } from 'graphql-subscriptions';
-const pubSub = new PubSub();
+import {
+  GraphQLWebsocketEvents,
+  PublisherService,
+} from '../publisher/publisher.service';
 
 @Resolver(() => FileEntity)
 export class FileResolver {
   constructor(
     private readonly fileService: FileService,
     private readonly recognitionTaskService: RecognitionTaskService,
+    private readonly publisherService: PublisherService,
   ) {}
 
   @Query(() => [FileEntity])
@@ -50,7 +53,9 @@ export class FileResolver {
   }
 
   @Subscription(() => RecognitionTaskEntity)
-  recognitionTaskUpdated() {
-    return pubSub.asyncIterator('test');
+  taskUpdated() {
+    return this.publisherService.getAsyncIterator(
+      GraphQLWebsocketEvents.TaskUpdated,
+    );
   }
 }

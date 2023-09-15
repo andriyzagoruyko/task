@@ -7,7 +7,6 @@ import { FileService } from 'src/modules/file/file.service';
 import { FileStatusEnum } from 'src/modules/file/enums/file-status.enum';
 import { recognize } from 'tesseract.js';
 import { HttpService } from 'src/modules/http/http.service';
-import { WebsocketService } from 'src/modules/websocket/websocket.service';
 import { RecognitionTaskService } from '../services/recognition-task.service';
 
 @Injectable()
@@ -17,7 +16,6 @@ export class ImageProcessingConsumer {
   constructor(
     private readonly fileService: FileService,
     private readonly httpService: HttpService,
-    private readonly websocketService: WebsocketService,
     private readonly recognitionTaskService: RecognitionTaskService,
   ) {}
 
@@ -25,17 +23,17 @@ export class ImageProcessingConsumer {
     exchange: RABBITMQ_IMAGE_TOPIC,
     routingKey: ImageRoutesEnum.RECOGNIZE,
   })
-  async processImageEvent({ fileId, socketId }: EnqueueFileDto) {
+  async processImageEvent({ fileId }: EnqueueFileDto) {
     const file = await this.fileService.findOne(fileId);
     try {
       this.logger.log(`Downloading file ${file.name}`);
       const image = await this.httpService.downloadFile(
         file.url,
-        (progress: number) => {
-          if (socketId) {
-            this.recognitionTaskService.updateOneByFileId(fileId, { progress });
-            this.websocketService.sendProgressToUser(socketId, progress);
-          }
+        async (progress: number) => {
+          file.task = await this.recognitionTaskService.updateOneByFileId(
+            fileId,
+            { progress },
+          );
         },
       );
       this.logger.log(`Recognizing text`);

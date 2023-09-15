@@ -20,9 +20,9 @@ export class HttpService {
           if (chunk) {
             receivedBytes += Buffer.byteLength(chunk);
             const progress = (receivedBytes / totalBytes) * 100;
+            onProgress?.(progress);
             console.log('Downloading file...', progress);
             data.push(chunk);
-            onProgress?.(progress);
           }
         });
 

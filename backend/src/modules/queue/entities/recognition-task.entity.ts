@@ -1,6 +1,7 @@
-import { ObjectType, Field } from '@nestjs/graphql';
+import { ObjectType, Field, Float } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
+import { GraphQLObjectID } from 'src/utils/graphQLObjectID';
 
 export type FileTaskDocument = HydratedDocument<RecognitionTaskEntity>;
 
@@ -8,12 +9,15 @@ export type FileTaskDocument = HydratedDocument<RecognitionTaskEntity>;
 @ObjectType()
 export class RecognitionTaskEntity {
   @Prop({ required: true })
-  @Field()
+  @Field(() => Float)
   fileId: number;
 
   @Prop({ required: true })
-  @Field()
+  @Field(() => Float)
   progress: number;
+
+  @Field(() => GraphQLObjectID)
+  id: string;
 }
 
 export const RecognitionTaskSchema = SchemaFactory.createForClass(

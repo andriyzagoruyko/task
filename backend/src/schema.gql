@@ -5,7 +5,13 @@
 type RecognitionTaskEntity {
   fileId: Float!
   progress: Float!
+  id: ObjectID!
 }
+
+"""
+A field whose value conforms with the standard mongodb object ID as described here: https://docs.mongodb.com/manual/reference/method/ObjectId/#ObjectId. Example: 5e5677d71bdc2ae76344968c
+"""
+scalar ObjectID
 
 type FileEntity {
   id: Int!
@@ -44,5 +50,5 @@ input EnqueueFileInput {
 }
 
 type Subscription {
-  recognitionTaskUpdated: RecognitionTaskEntity!
+  taskUpdated: RecognitionTaskEntity!
 }

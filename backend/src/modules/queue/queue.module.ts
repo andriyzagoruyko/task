@@ -7,7 +7,6 @@ import { FileModule } from '../file/file.module';
 import { RABBITMQ_AUDIO_TOPIC, RABBITMQ_IMAGE_TOPIC } from 'src/definitions';
 import { AudioProcessingConsumer } from './consumers/audio-processing.consumer';
 import { HttpModule } from '../http/http.module';
-import { WebsocketModule } from '../websocket/websocket.module';
 import { QueueResolver } from './queue.resolver';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
@@ -15,11 +14,12 @@ import {
   RecognitionTaskSchema,
 } from './entities/recognition-task.entity';
 import { RecognitionTaskService } from './services/recognition-task.service';
+import { PublisherModule } from '../publisher/publisher.module';
 
 @Module({
   imports: [
     HttpModule,
-    WebsocketModule,
+    PublisherModule,
     forwardRef(() => FileModule),
     RabbitMQModule.forRootAsync(RabbitMQModule, {
       useFactory: RabbitMQFactory,

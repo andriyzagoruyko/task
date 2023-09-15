@@ -9,7 +9,7 @@ const URL_REGEX =
 
 export const EMPTY_ROW: IRow = {
   url: "",
-  lang: "",
+  lang: "eng",
   isLinkValid: false,
   isLangValid: false,
   isTouched: false,
@@ -54,18 +54,18 @@ export const useRows = () => {
     setHasAddedAssets(false);
   };
 
-  const createSingleAsset = async (row: IRow, socketId: string | null) => {
+  const createSingleAsset = async (row: IRow) => {
     const { url, lang } = row;
     try {
-      return await enqueueFile({ variables: { url, lang, socketId } });
+      return await enqueueFile({ variables: { url, lang } });
     } catch {}
     return null;
   };
 
-  const createAssetsFromRows = async (socketId: string | null) => {
+  const createAssetsFromRows = async () => {
     setHasAddedAssets(false);
     for (const row of rows) {
-      const res = await createSingleAsset(row, socketId);
+      const res = await createSingleAsset(row);
       if (res) {
         setHasAddedAssets(true);
         setRows([EMPTY_ROW]);
