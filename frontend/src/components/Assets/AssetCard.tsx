@@ -4,6 +4,7 @@ import {
   CardContent,
   CardMedia,
   Chip,
+  LinearProgress,
   PropTypes,
   Typography,
 } from "@material-ui/core";
@@ -21,6 +22,9 @@ export interface IAsset {
   error: string | null;
   createdAt: string;
   type: FileTypeEnum;
+  task?: {
+    progress: number;
+  };
 }
 
 export enum FileTypeEnum {
@@ -29,15 +33,17 @@ export enum FileTypeEnum {
 }
 
 export enum FileStatusEnum {
-  SAVED = "saved",
+  PENDING = "pending",
+  DOWNLOADING = "downloading",
   PROCESSING = "processing",
   READY = "ready",
   FAILED = "failed",
 }
 
 const StatusColors = {
-  [FileStatusEnum.SAVED]: undefined,
-  [FileStatusEnum.PROCESSING]: undefined,
+  [FileStatusEnum.PENDING]: 'default',
+  [FileStatusEnum.DOWNLOADING]: 'default',
+  [FileStatusEnum.PROCESSING]: 'default',
   [FileStatusEnum.READY]: "primary",
   [FileStatusEnum.FAILED]: "secondary",
 };
@@ -53,6 +59,7 @@ export const AssetCard: React.FC<IAsset> = ({
   error,
   createdAt,
   type,
+  task,
 }) => {
   const styles = useStyles();
   return (
@@ -114,6 +121,14 @@ export const AssetCard: React.FC<IAsset> = ({
             "There is no saved text at the moment. Probably the asset is in processing or the asset has no text"}
         </Typography>
       </Stack>
+      {[FileStatusEnum.DOWNLOADING, FileStatusEnum.PENDING].includes(status) && (
+        <LinearProgress
+          variant="determinate"
+          value={task?.progress}
+          color="primary"
+          style={{ zIndex: 1000 }}
+        />
+      )}
     </Card>
   );
 };

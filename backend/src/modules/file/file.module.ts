@@ -6,14 +6,14 @@ import { FileController } from './file.controller';
 import { FileResolver } from './file.resolver';
 import { QueueModule } from '../queue/queue.module';
 import { HttpModule } from '../http/http.module';
-import { PublisherModule } from '../publisher/publisher.module';
+import { EventPublisherModule } from '../event-publisher/event-publisher.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([FileEntity]),
     HttpModule,
     forwardRef(() => QueueModule),
-    PublisherModule,
+    EventPublisherModule,
   ],
   providers: [FileService, FileResolver],
   exports: [FileService],

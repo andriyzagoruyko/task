@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { DeepPartial } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -12,6 +13,10 @@ import { QueueService } from '../queue/services/queue.service';
 import { EnqueueFileInput } from './dto/enqueue-file.input';
 import { FileTypeEnum } from './enums/file-type.enum';
 import { FileStatusEnum } from './enums/file-status.enum';
+import {
+  EventPublisherService,
+  GraphQLWebsocketEvents,
+} from '../event-publisher/event-publisher.service';
 
 @Injectable()
 export class FileService {
@@ -20,6 +25,7 @@ export class FileService {
     private readonly fileRepository: Repository<FileEntity>,
     private readonly httpService: HttpService,
     private readonly queueService: QueueService,
+    private readonly eventPublisherService: EventPublisherService,
   ) {}
 
   findAll() {
@@ -33,12 +39,13 @@ export class FileService {
     return this.fileRepository.findOneByOrFail({ id });
   }
 
-  createFile(fileData: DeepPartial<FileEntity>) {
-    return this.fileRepository.save({ ...fileData });
-  }
-
-  updateFile(id: number, fileData: DeepPartial<FileEntity>) {
-    return this.fileRepository.update(id, fileData);
+  async updateFile(id: number, fileData: DeepPartial<FileEntity>) {
+    const { affected } = await this.fileRepository.update(id, fileData);
+    if (!affected) {
+      throw new NotFoundException('File not found');
+    }
+    const file = await this.findOne(id);
+    this.publishFileUpdateEvent(file);
   }
 
   async getStats(): Promise<{ totalSize: number; count: number }> {
@@ -64,37 +71,48 @@ export class FileService {
       .getRawOne();
   }
 
-  async enqueueFile({ url, lang, socketId }: EnqueueFileInput) {
-    const name = this.getUrlFilename(url);
-    const file = await this.httpService
+  async createFile(url: string, lang: string) {
+    const name = url.split('/').pop();
+    return this.httpService
       .getFileProperties(url)
-      .then(({ type, size }) => {
-        const status = FileStatusEnum.SAVED;
-        return this.createFile({ name, lang, url, type, size, status });
-      })
+      .then(({ type, size }) =>
+        this.fileRepository.save({
+          name,
+          lang,
+          url,
+          type,
+          size,
+          status: FileStatusEnum.PENDING,
+        }),
+      )
       .catch((err) => {
         if (err instanceof BadRequestException) {
           throw err;
         }
         throw new InternalServerErrorException(String(err));
       });
+  }
 
+  async enqueueFile({ url, lang }: EnqueueFileInput) {
+    const file = await this.createFile(url, lang);
     console.log('File created', file);
 
     if (file.type === FileTypeEnum.IMAGE) {
-      await this.queueService.publishImageRecognitionTask(file.id, socketId);
+      await this.queueService.publishImageRecognitionTask(file.id);
       console.log('Published to image queue', file.id);
     }
 
     if (file.type === FileTypeEnum.AUDIO) {
-      await this.queueService.publishAudioRecognitionTask(file.id, socketId);
+      await this.queueService.publishAudioRecognitionTask(file.id);
       console.log('Published to audio queue', file.id);
     }
 
     return file;
   }
 
-  getUrlFilename(url: string) {
-    return url.split('/').pop();
+  publishFileUpdateEvent(fileUpdated: FileEntity) {
+    return this.eventPublisherService.publishEvent<{
+      fileUpdated: FileEntity;
+    }>(GraphQLWebsocketEvents.FileUpdated, { fileUpdated });
   }
 }

@@ -4,15 +4,15 @@ import { RecognitionTaskEntity } from '../entities/recognition-task.entity';
 import { Model } from 'mongoose';
 import {
   GraphQLWebsocketEvents,
-  PublisherService,
-} from 'src/modules/publisher/publisher.service';
+  EventPublisherService,
+} from 'src/modules/event-publisher/event-publisher.service';
 
 @Injectable()
 export class RecognitionTaskService {
   constructor(
     @InjectModel(RecognitionTaskEntity.name)
     private readonly recognitionTaskModel: Model<RecognitionTaskEntity>,
-    private readonly publisherService: PublisherService,
+    private readonly eventPublisherService: EventPublisherService,
   ) {}
 
   async create(data: Partial<RecognitionTaskEntity>) {
@@ -31,9 +31,8 @@ export class RecognitionTaskService {
     await this.recognitionTaskModel.updateOne({ fileId }, data).exec();
 
     const taskUpdated = await this.findByFileId(fileId);
-    console.log(taskUpdated);
 
-    this.publisherService.publishEvent<{
+    this.eventPublisherService.publishEvent<{
       taskUpdated: RecognitionTaskEntity;
     }>(GraphQLWebsocketEvents.TaskUpdated, { taskUpdated });
 

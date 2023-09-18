@@ -14,12 +14,12 @@ import {
   RecognitionTaskSchema,
 } from './entities/recognition-task.entity';
 import { RecognitionTaskService } from './services/recognition-task.service';
-import { PublisherModule } from '../publisher/publisher.module';
+import { EventPublisherModule } from '../event-publisher/event-publisher.module';
 
 @Module({
   imports: [
     HttpModule,
-    PublisherModule,
+    EventPublisherModule,
     forwardRef(() => FileModule),
     RabbitMQModule.forRootAsync(RabbitMQModule, {
       useFactory: RabbitMQFactory,

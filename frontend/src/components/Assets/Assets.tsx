@@ -3,19 +3,18 @@ import { createUseStyles } from "react-jss";
 import { AssetCard, IAsset } from "./AssetCard";
 import { Stats } from "../Stats";
 import { useQuery, useSubscription } from "@apollo/client";
-import { ALL_FILES, TASK_UPDATED_SUBSCRIPTION } from "../../apollo/file";
-import { useEffect } from "react";
+import {
+  ALL_FILES,
+  FILE_UPDATED_SUBSCRIPTION,
+  TASK_UPDATED_SUBSCRIPTION,
+} from "../../apollo/file";
 
 export function Assets() {
-  const { loading, data } = useQuery<{ assets: IAsset[] }>(ALL_FILES);
-  const {
-    loading: updatedTaskIsLoading,
-    data: updatedTaskData,
-    error: updatedTaskError,
-  } = useSubscription(TASK_UPDATED_SUBSCRIPTION, { shouldResubscribe: true });
   const styles = useStyles();
+  const { loading, data } = useQuery<{ assets: IAsset[] }>(ALL_FILES);
 
-  console.log(updatedTaskIsLoading, updatedTaskData, updatedTaskError);
+  useSubscription(TASK_UPDATED_SUBSCRIPTION);
+  useSubscription(FILE_UPDATED_SUBSCRIPTION);
 
   if (loading) {
     return (

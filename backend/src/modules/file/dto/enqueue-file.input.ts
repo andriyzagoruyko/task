@@ -5,7 +5,7 @@ import { Field, ID, InputType } from '@nestjs/graphql';
 
 @InputType()
 export class EnqueueFileInput {
- // @JoiSchema(Joi.string().required())
+  // @JoiSchema(Joi.string().required())
   @Field()
   url!: string;
 
@@ -16,8 +16,4 @@ export class EnqueueFileInput {
   )*/
   @Field()
   lang!: string;
-
- // @JoiSchema(Joi.string())
-  @Field(() => ID, { nullable: true })
-  socketId?: string;
 }

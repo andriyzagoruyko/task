@@ -1,9 +1,8 @@
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import { Injectable } from '@nestjs/common';
 import { EnqueueFileDto } from '../dto/enqueue-file.dto';
-import { ImageRoutesEnum } from '../enums/image-routes.enum';
+import { QueueRoutesEnum } from '../enums/queue-routes.enum';
 import { RABBITMQ_AUDIO_TOPIC, RABBITMQ_IMAGE_TOPIC } from 'src/definitions';
-import { AudioRoutesEnum } from '../enums/audio-routes.enum';
 import { RecognitionTaskService } from './recognition-task.service';
 
 @Injectable()
@@ -13,21 +12,21 @@ export class QueueService {
     private readonly recognitionTaskService: RecognitionTaskService,
   ) {}
 
-  async publishImageRecognitionTask(fileId: number, socketId: string) {
+  async publishImageRecognitionTask(fileId: number) {
     await this.recognitionTaskService.create({ fileId, progress: 0 });
     await this.amqpConnection.publish<EnqueueFileDto>(
       RABBITMQ_IMAGE_TOPIC,
-      ImageRoutesEnum.RECOGNIZE,
-      { fileId, socketId },
+      QueueRoutesEnum.RECOGNIZE_IMAGE,
+      { fileId },
     );
   }
 
-  async publishAudioRecognitionTask(fileId: number, socketId: string) {
+  async publishAudioRecognitionTask(fileId: number) {
     await this.recognitionTaskService.create({ fileId, progress: 0 });
     await this.amqpConnection.publish<EnqueueFileDto>(
       RABBITMQ_AUDIO_TOPIC,
-      AudioRoutesEnum.RECOGNIZE,
-      { fileId, socketId },
+      QueueRoutesEnum.RECOGNIZE_AUDIO,
+      { fileId },
     );
   }
 }

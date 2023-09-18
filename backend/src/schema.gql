@@ -46,9 +46,9 @@ type Mutation {
 input EnqueueFileInput {
   url: String!
   lang: String!
-  socketId: ID
 }
 
 type Subscription {
+  fileUpdated: FileEntity!
   taskUpdated: RecognitionTaskEntity!
 }

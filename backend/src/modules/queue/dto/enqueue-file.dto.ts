@@ -4,7 +4,4 @@ import * as Joi from 'joi';
 export class EnqueueFileDto {
   //@JoiSchema(Joi.number().required())
   fileId!: number;
-
-  // @JoiSchema(Joi.string())
-  socketId?: string;
 }

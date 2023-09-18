@@ -16,15 +16,15 @@ import { RecognitionTaskEntity } from '../queue/entities/recognition-task.entity
 import { RecognitionTaskService } from '../queue/services/recognition-task.service';
 import {
   GraphQLWebsocketEvents,
-  PublisherService,
-} from '../publisher/publisher.service';
+  EventPublisherService,
+} from '../event-publisher/event-publisher.service';
 
 @Resolver(() => FileEntity)
 export class FileResolver {
   constructor(
     private readonly fileService: FileService,
     private readonly recognitionTaskService: RecognitionTaskService,
-    private readonly publisherService: PublisherService,
+    private readonly publisherService: EventPublisherService,
   ) {}
 
   @Query(() => [FileEntity])
@@ -50,6 +50,13 @@ export class FileResolver {
   @Query(() => StatsDto)
   stats() {
     return this.fileService.getStats();
+  }
+
+  @Subscription(() => FileEntity)
+  fileUpdated() {
+    return this.publisherService.getAsyncIterator(
+      GraphQLWebsocketEvents.FileUpdated,
+    );
   }
 
   @Subscription(() => RecognitionTaskEntity)

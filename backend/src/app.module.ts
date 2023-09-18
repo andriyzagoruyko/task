@@ -13,7 +13,7 @@ import { ApolloDriverConfig, ApolloDriver } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
 import { MongooseModule } from '@nestjs/mongoose';
-import { PublisherModule } from './modules/publisher/publisher.module';
+import { EventPublisherModule } from './modules/event-publisher/event-publisher.module';
 
 @Module({
   imports: [
@@ -65,7 +65,7 @@ import { PublisherModule } from './modules/publisher/publisher.module';
       inject: [ConfigService],
     }),
     HttpModule,
-    PublisherModule,
+    EventPublisherModule,
   ],
 })
 export class AppModule {}

@@ -20,10 +20,8 @@ export const ALL_FILES = gql`
 `;
 
 export const ENQUEUE_FILE = gql`
-  mutation enqueueFile($url: String!, $lang: String!, $socketId: ID) {
-    newAsset: enqueueFile(
-      enqueueFileInput: { url: $url, lang: $lang, socketId: $socketId }
-    ) {
+  mutation enqueueFile($url: String!, $lang: String!) {
+    newAsset: enqueueFile(enqueueFileInput: { url: $url, lang: $lang }) {
       id
       name
       status
@@ -47,9 +45,28 @@ export const STATS = gql`
 export const TASK_UPDATED_SUBSCRIPTION = gql`
   subscription {
     taskUpdated {
-      id,
+      id
       fileId
       progress
+    }
+  }
+`;
+
+export const FILE_UPDATED_SUBSCRIPTION = gql`
+  subscription {
+    fileUpdated {
+      id
+      name
+      status
+      type
+      size
+      url
+      text
+      task {
+        id
+        progress
+        fileId
+      }
     }
   }
 `;

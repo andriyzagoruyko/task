@@ -33,5 +33,18 @@ const splitLink = split(
 
 export const client = new ApolloClient({
   link: splitLink,
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    typePolicies: {
+      RecognitionTaskEntity: {
+        fields: {
+          //fix progress race condition
+          progress: {
+            merge: (existing, incoming) => {
+              return incoming < existing ? existing : incoming;
+            },
+          },
+        },
+      },
+    },
+  }),
 });
