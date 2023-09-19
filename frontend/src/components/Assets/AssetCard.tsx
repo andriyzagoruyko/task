@@ -12,7 +12,7 @@ import { Stack } from "@mui/material";
 import React from "react";
 import { createUseStyles } from "react-jss";
 
-export interface IAsset {
+export interface AssetEntityInterface {
   id: number;
   name: string;
   status: FileStatusEnum;
@@ -41,23 +41,22 @@ export enum FileStatusEnum {
 }
 
 const StatusColors = {
-  [FileStatusEnum.PENDING]: 'default',
-  [FileStatusEnum.DOWNLOADING]: 'default',
-  [FileStatusEnum.PROCESSING]: 'default',
+  [FileStatusEnum.PENDING]: "default",
+  [FileStatusEnum.DOWNLOADING]: "default",
+  [FileStatusEnum.PROCESSING]: "default",
   [FileStatusEnum.READY]: "primary",
   [FileStatusEnum.FAILED]: "secondary",
 };
 
 const PLACEHOLDER = "/placeholder.jpg";
 
-export const AssetCard: React.FC<IAsset> = ({
+export const AssetCard: React.FC<AssetEntityInterface> = ({
   name,
   status,
   url,
   size,
   text,
   error,
-  createdAt,
   type,
   task,
 }) => {
@@ -83,9 +82,7 @@ export const AssetCard: React.FC<IAsset> = ({
               <Chip
                 label={status}
                 size="small"
-                color={
-                  StatusColors[status] as Exclude<PropTypes.Color, "inherit">
-                }
+                color={StatusColors[status] as any}
               />
             </Stack>
             <Stack
@@ -121,7 +118,9 @@ export const AssetCard: React.FC<IAsset> = ({
             "There is no saved text at the moment. Probably the asset is in processing or the asset has no text"}
         </Typography>
       </Stack>
-      {[FileStatusEnum.DOWNLOADING, FileStatusEnum.PENDING].includes(status) && (
+      {[FileStatusEnum.DOWNLOADING, FileStatusEnum.PENDING].includes(
+        status
+      ) && (
         <LinearProgress
           variant="determinate"
           value={task?.progress}

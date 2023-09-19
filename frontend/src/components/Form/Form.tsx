@@ -5,7 +5,6 @@ import { Rows } from "./Rows";
 import Snackbar from "@mui/material/Snackbar";
 import { Alert } from "@mui/material";
 import { useRows } from "./hooks/useRows";
-import { ProgressBar } from "../ProgressBar";
 
 export function Form() {
   const styles = useStyles();

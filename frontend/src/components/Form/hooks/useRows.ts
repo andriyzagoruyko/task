@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { IRow } from "../Rows";
 import { useMutation } from "@apollo/client";
 import { ALL_FILES, ENQUEUE_FILE } from "../../../apollo/file";
-import { IAsset } from "../../Assets/AssetCard";
+import { AssetEntityInterface } from "../../Assets/AssetCard";
 
 const URL_REGEX =
   /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gi;
@@ -22,7 +22,7 @@ export const useRows = () => {
   const [enqueueFile, { loading, error }] = useMutation(ENQUEUE_FILE, {
     update: (cache, { data: { newAsset } }) => {
       const { assets } = cache.readQuery({ query: ALL_FILES }) as {
-        assets: IAsset[];
+        assets: AssetEntityInterface[];
       };
       cache.writeQuery({
         query: ALL_FILES,

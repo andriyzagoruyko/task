@@ -1,6 +1,6 @@
 import { Box, Typography } from "@material-ui/core";
 import { createUseStyles } from "react-jss";
-import { AssetCard, IAsset } from "./AssetCard";
+import { AssetCard, AssetEntityInterface } from "./AssetCard";
 import { Stats } from "../Stats";
 import { useQuery, useSubscription } from "@apollo/client";
 import {
@@ -11,8 +11,9 @@ import {
 
 export function Assets() {
   const styles = useStyles();
-  const { loading, data } = useQuery<{ assets: IAsset[] }>(ALL_FILES);
-
+  const { loading, data } = useQuery<{ assets: AssetEntityInterface[] }>(
+    ALL_FILES
+  );
   useSubscription(TASK_UPDATED_SUBSCRIPTION);
   useSubscription(FILE_UPDATED_SUBSCRIPTION);
 
@@ -44,7 +45,7 @@ export function Assets() {
       <Stats />
       <Box className={styles.assetWrapper}>
         {loading ? <Typography>loading</Typography> : null}
-        {data?.assets?.map((asset: IAsset) => (
+        {data?.assets?.map((asset: AssetEntityInterface) => (
           <Box className={styles.assetWrapper} key={asset.id}>
             <AssetCard {...asset} />
           </Box>
