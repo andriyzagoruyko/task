@@ -1,10 +1,10 @@
 import { NestFactory } from '@nestjs/core';
-import { GatewayModule } from './gateway.module';
+import { QueueModule } from './queue.module';
 import { ConfigService } from '@app/shared/config/config.service';
 
 async function bootstrap() {
-  const app = await NestFactory.create(GatewayModule);
+  const app = await NestFactory.create(QueueModule);
   const configService = app.get(ConfigService);
-  await app.listen(configService.gatewayHttpPort);
+  await app.listen(configService.queueHttpPort);
 }
 bootstrap();

@@ -11,14 +11,17 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/apps/main/main",
+    "start:prod": "node dist/apps/file/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./apps/main/test/jest-e2e.json",
-    "dev": "concurrently -n main,gateway, -c green,cyan \"npm run start:dev\" \"npm run start:dev gateway\" "
+    "test:e2e": "jest --config ./apps/file/test/jest-e2e.json",
+    "dev:gateway": "npm run start:dev gateway",
+    "dev:queue": "npm run start:dev queue",
+    "dev:file": "npm run start:dev file",
+    "dev": "concurrently -n queue,gateway,queue -c green,cyan,red \"npm run dev:gateway\" \"npm run dev:file\" \"npm run dev:queue\""
   },
   "dependencies": {
     "@apollo/gateway": "^2.5.5",

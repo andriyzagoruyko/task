@@ -20,7 +20,7 @@ export interface AssetEntityInterface {
   type: FileTypeEnum;
   task?: {
     progress: number;
-    status: FileStatusEnum;
+    status: TaskStatusEnum;
     result: string;
     error: string;
   };
@@ -31,7 +31,7 @@ export enum FileTypeEnum {
   AUDIO = "audio",
 }
 
-export enum FileStatusEnum {
+export enum TaskStatusEnum {
   PENDING = "pending",
   DOWNLOADING = "downloading",
   PROCESSING = "processing",
@@ -40,11 +40,11 @@ export enum FileStatusEnum {
 }
 
 const StatusColors = {
-  [FileStatusEnum.PENDING]: "default",
-  [FileStatusEnum.DOWNLOADING]: "default",
-  [FileStatusEnum.PROCESSING]: "default",
-  [FileStatusEnum.READY]: "primary",
-  [FileStatusEnum.FAILED]: "secondary",
+  [TaskStatusEnum.PENDING]: "default",
+  [TaskStatusEnum.DOWNLOADING]: "default",
+  [TaskStatusEnum.PROCESSING]: "default",
+  [TaskStatusEnum.READY]: "primary",
+  [TaskStatusEnum.FAILED]: "secondary",
 };
 
 const PLACEHOLDER = "/placeholder.jpg";
@@ -115,7 +115,7 @@ export const AssetCard: React.FC<AssetEntityInterface> = ({
         </Typography>
       </Stack>
       {task?.status &&
-        [FileStatusEnum.DOWNLOADING, FileStatusEnum.PENDING].includes(
+        [TaskStatusEnum.DOWNLOADING, TaskStatusEnum.PENDING].includes(
           task?.status
         ) && (
           <LinearProgress

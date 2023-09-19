@@ -10,7 +10,7 @@ const httpLink = new HttpLink({
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: "ws://localhost/api/subscriptions",
+    url: "ws://localhost:8081/subscriptions",
   })
 );
 
