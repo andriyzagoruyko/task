@@ -4,6 +4,7 @@ import { ApolloGatewayDriver, ApolloGatewayDriverConfig } from '@nestjs/apollo';
 import { IntrospectAndCompose } from '@apollo/gateway';
 import { ConfigModule } from '@app/shared/config/config.module';
 import { ConfigService } from '@app/shared/config/config.service';
+
 @Module({
   imports: [
     ConfigModule,
@@ -13,7 +14,7 @@ import { ConfigService } from '@app/shared/config/config.service';
         gateway: {
           supergraphSdl: new IntrospectAndCompose({
             subgraphs: [
-              { name: 'file', url: config.fileGraphQLUrl },
+              //{ name: 'file', url: config.fileGraphQLUrl },
               { name: 'queue', url: config.queueGraphQLUrl },
             ],
           }),

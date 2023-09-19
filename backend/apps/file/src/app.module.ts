@@ -12,10 +12,10 @@ import {
   ApolloFederationDriverConfig,
 } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
-import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@app/shared/config/config.module';
 import { ConfigService } from '@app/shared/config/config.service';
 import { MIGRATION_TABLE_NAME, ENTITIES_PATHS } from '@app/shared/definitions';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -47,32 +47,9 @@ import { MIGRATION_TABLE_NAME, ENTITIES_PATHS } from '@app/shared/definitions';
       driver: ApolloFederationDriver,
       autoSchemaFile: {
         federation: 2,
+        path: join(process.cwd(), 'src/file.gql'),
       },
       playground: true,
-    }),
-    /*
-        GraphQLModule.forRoot<ApolloDriverConfig>({
-      driver: ApolloDriver,
-      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-      playground: true,
-      installSubscriptionHandlers: true,
-      subscriptions: {
-        'graphql-ws': { path: '/subscriptions' },
-        'subscriptions-transport-ws': false,
-      },
-    }),*/
-    MongooseModule.forRootAsync({
-      useFactory: (config: ConfigService) => {
-        return {
-          dbName: config.queueDatabase.name,
-          auth: {
-            username: config.queueDatabase.user,
-            password: config.queueDatabase.pass,
-          },
-          uri: `mongodb://${config.queueDatabase.host}:${config.queueDatabase.port}`,
-        };
-      },
-      inject: [ConfigService],
     }),
     HttpModule,
   ],

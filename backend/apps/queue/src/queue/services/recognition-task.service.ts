@@ -2,17 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { RecognitionTaskEntity } from '../entities/recognition-task.entity';
 import { Model } from 'mongoose';
-import {
-  GraphQLWebsocketEvents,
-  EventPublisherService,
-} from '../../event-publisher/event-publisher.service';
+import { GraphQLPublisherService, GraphQLWebsocketEvents } from '../../graphql-publisher/graphql-publisher.service';
+
 
 @Injectable()
 export class RecognitionTaskService {
   constructor(
     @InjectModel(RecognitionTaskEntity.name)
     private readonly recognitionTaskModel: Model<RecognitionTaskEntity>,
-    private readonly eventPublisherService: EventPublisherService,
+    private readonly graphqlPublisherService: GraphQLPublisherService,
   ) {}
 
   async create(data: Partial<RecognitionTaskEntity>) {
@@ -29,7 +27,7 @@ export class RecognitionTaskService {
 
     const taskUpdated = await this.findByFileId(fileId);
 
-    this.eventPublisherService.publishEvent<{
+    this.graphqlPublisherService.publishEvent<{
       taskUpdated: RecognitionTaskEntity;
     }>(GraphQLWebsocketEvents.TaskUpdated, { taskUpdated });
 

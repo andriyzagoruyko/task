@@ -15,7 +15,7 @@ export function Assets() {
     ALL_FILES
   );
   useSubscription(TASK_UPDATED_SUBSCRIPTION);
-  useSubscription(FILE_UPDATED_SUBSCRIPTION);
+  //useSubscription(FILE_UPDATED_SUBSCRIPTION);
 
   if (loading) {
     return (

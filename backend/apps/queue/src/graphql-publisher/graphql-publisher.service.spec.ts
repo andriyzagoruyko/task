@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { EventPublisherService } from './event-publisher.service';
+import { GraphQLPublisherService } from './graphql-publisher.service';
 
 describe('PublisherService', () => {
-  let service: EventPublisherService;
+  let service: GraphQLPublisherService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [EventPublisherService],
+      providers: [GraphQLPublisherService],
     }).compile();
 
-    service = module.get<EventPublisherService>(EventPublisherService);
+    service = module.get<GraphQLPublisherService>(GraphQLPublisherService);
   });
 
   it('should be defined', () => {

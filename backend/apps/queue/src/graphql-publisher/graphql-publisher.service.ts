@@ -6,7 +6,7 @@ export enum GraphQLWebsocketEvents {
 }
 
 @Injectable()
-export class EventPublisherService {
+export class GraphQLPublisherService {
   private pubSob: PubSub = new PubSub();
 
   getAsyncIterator(
