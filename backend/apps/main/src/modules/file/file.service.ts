@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { DeepPartial } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FileEntity } from './entities/file.entity';
+import { FileEntity } from 'apps/main/src/modules/file/entities/file.entity';
 import { Repository } from 'typeorm';
 import { HttpService } from '../http/http.service';
 import { QueueService } from '../queue/services/queue.service';
@@ -48,6 +48,58 @@ export class FileService {
     this.publishFileUpdateEvent(file);
   }
 
+  private publishFileUpdateEvent(fileUpdated: FileEntity) {
+    return this.eventPublisherService.publishEvent<{
+      fileUpdated: FileEntity;
+    }>(GraphQLWebsocketEvents.FileUpdated, { fileUpdated });
+  }
+
+  async createFile(url: string, lang: string) {
+    const name = url.split('/').pop();
+    return this.httpService
+      .getFileProperties(url)
+      .then(({ type, size }) =>
+        this.fileRepository.save({
+          name,
+          lang,
+          url,
+          type,
+          size,
+        }),
+      )
+      .catch((err) => {
+        if (err instanceof BadRequestException) {
+          throw err;
+        }
+        throw new InternalServerErrorException(String(err));
+      });
+  }
+
+  async enqueueFile({ url, lang }: EnqueueFileInput) {
+    const file = await this.createFile(url, lang);
+    console.log('File created', file);
+
+    if (file.type === FileTypeEnum.IMAGE) {
+      await this.queueService.publishImageRecognitionTask({
+        fileId: file.id,
+        url,
+        lang,
+      });
+      console.log('Published to image queue', file.id);
+    }
+
+    if (file.type === FileTypeEnum.AUDIO) {
+      await this.queueService.publishAudioRecognitionTask({
+        fileId: file.id,
+        url,
+        lang,
+      });
+      console.log('Published to audio queue', file.id);
+    }
+
+    return file;
+  }
+
   async getStats(): Promise<{ totalSize: number; count: number }> {
     return {
       ...(await this.getTotalSizeForPastMonth()),
@@ -69,50 +121,5 @@ export class FileService {
       .select('COUNT(id) as count')
       .where('created_at > (NOW() - INTERVAL 1 MONTH)')
       .getRawOne();
-  }
-
-  async createFile(url: string, lang: string) {
-    const name = url.split('/').pop();
-    return this.httpService
-      .getFileProperties(url)
-      .then(({ type, size }) =>
-        this.fileRepository.save({
-          name,
-          lang,
-          url,
-          type,
-          size,
-          status: FileStatusEnum.PENDING,
-        }),
-      )
-      .catch((err) => {
-        if (err instanceof BadRequestException) {
-          throw err;
-        }
-        throw new InternalServerErrorException(String(err));
-      });
-  }
-
-  async enqueueFile({ url, lang }: EnqueueFileInput) {
-    const file = await this.createFile(url, lang);
-    console.log('File created', file);
-
-    if (file.type === FileTypeEnum.IMAGE) {
-      await this.queueService.publishImageRecognitionTask(file.id);
-      console.log('Published to image queue', file.id);
-    }
-
-    if (file.type === FileTypeEnum.AUDIO) {
-      await this.queueService.publishAudioRecognitionTask(file.id);
-      console.log('Published to audio queue', file.id);
-    }
-
-    return file;
-  }
-
-  publishFileUpdateEvent(fileUpdated: FileEntity) {
-    return this.eventPublisherService.publishEvent<{
-      fileUpdated: FileEntity;
-    }>(GraphQLWebsocketEvents.FileUpdated, { fileUpdated });
   }
 }

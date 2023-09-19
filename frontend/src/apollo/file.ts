@@ -5,15 +5,16 @@ export const ALL_FILES = gql`
     assets: allFiles {
       id
       name
-      status
       type
       size
       url
-      text
       task {
         id
         progress
         fileId
+        status
+        result
+        error
       }
     }
   }
@@ -24,11 +25,9 @@ export const ENQUEUE_FILE = gql`
     newAsset: enqueueFile(enqueueFileInput: { url: $url, lang: $lang }) {
       id
       name
-      status
       type
       size
       url
-      text
     }
   }
 `;
@@ -48,6 +47,8 @@ export const TASK_UPDATED_SUBSCRIPTION = gql`
       id
       fileId
       progress
+      status
+      result
     }
   }
 `;
@@ -61,11 +62,12 @@ export const FILE_UPDATED_SUBSCRIPTION = gql`
       type
       size
       url
-      text
       task {
         id
         progress
         fileId
+        result
+        error
       }
     }
   }

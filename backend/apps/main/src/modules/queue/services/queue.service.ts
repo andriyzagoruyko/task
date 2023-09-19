@@ -6,30 +6,24 @@ import {
   RABBITMQ_AUDIO_TOPIC,
   RABBITMQ_IMAGE_TOPIC,
 } from '../../../definitions';
-import { RecognitionTaskService } from './recognition-task.service';
 
 @Injectable()
 export class QueueService {
-  constructor(
-    private readonly amqpConnection: AmqpConnection,
-    private readonly recognitionTaskService: RecognitionTaskService,
-  ) {}
+  constructor(private readonly amqpConnection: AmqpConnection) {}
 
-  async publishImageRecognitionTask(fileId: number) {
-    await this.recognitionTaskService.create({ fileId, progress: 0 });
+  async publishImageRecognitionTask(data: EnqueueFileDto) {
     await this.amqpConnection.publish<EnqueueFileDto>(
       RABBITMQ_IMAGE_TOPIC,
       QueueRoutesEnum.RECOGNIZE_IMAGE,
-      { fileId },
+      data,
     );
   }
 
-  async publishAudioRecognitionTask(fileId: number) {
-    await this.recognitionTaskService.create({ fileId, progress: 0 });
+  async publishAudioRecognitionTask(data: EnqueueFileDto) {
     await this.amqpConnection.publish<EnqueueFileDto>(
       RABBITMQ_AUDIO_TOPIC,
       QueueRoutesEnum.RECOGNIZE_AUDIO,
-      { fileId },
+      data,
     );
   }
 }

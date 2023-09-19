@@ -7,7 +7,7 @@ import {
 import { FileStatusEnum } from '../enums/file-status.enum';
 import { FileTypeEnum } from '../enums/file-type.enum';
 import { Field, ObjectType, Int } from '@nestjs/graphql';
-import { RecognitionTaskEntity } from '../../../modules/queue/entities/recognition-task.entity';
+import { RecognitionTaskEntity } from '../../queue/entities/recognition-task.entity';
 
 @Entity({ name: 'file' })
 @ObjectType()
@@ -17,20 +17,12 @@ export class FileEntity {
   id!: number;
 
   @Column({ type: 'varchar', length: 255 })
-  @Field(() => String)
-  status!: FileStatusEnum;
-
-  @Column({ type: 'varchar', length: 255 })
   @Field()
   name!: string;
 
   @Column({ type: 'varchar', length: 30 })
   @Field()
   lang!: string;
-
-  @Column({ type: 'text', nullable: true })
-  @Field({ nullable: true })
-  text!: string | null;
 
   @Column({ type: 'varchar', length: 255 })
   @Field()
@@ -43,10 +35,6 @@ export class FileEntity {
   @Column({ type: 'integer', nullable: true })
   @Field(() => Int, { nullable: true })
   size!: number;
-
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  @Field({ nullable: true })
-  error!: string;
 
   @CreateDateColumn({
     type: 'datetime',
@@ -67,5 +55,3 @@ export class FileEntity {
   @Field({ nullable: true })
   task?: RecognitionTaskEntity;
 }
-
-export type GroupedImageEntity = FileEntity & { count?: number };

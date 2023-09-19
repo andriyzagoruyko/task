@@ -7,7 +7,7 @@
         "shell": "export DOCKER_GROUP_ID=$(getent group docker | cut -d ':' -f 3) && npm run shell:build && docker-compose -f docker-compose.dev.yml run --rm -u 1000 --name recognizer-dev --service-ports app zsh || true && echo Stopping environment... && docker-compose -f docker-compose.dev.yml down",
         "shell:stop": "export DOCKER_GROUP_ID=$(getent group docker | cut -d ':' -f 3) && docker-compose -f docker-compose.dev.yml down",
         "shell:join": "docker exec -it recognizer-dev zsh",
-        "dev:backend": "cd backend && npm run start:dev",
+        "dev:backend": "cd backend && npm run dev",
         "dev:frontend": "cd frontend && npm run start",
         "dev:server": "cd backend && npm run dev",
         "dev": "concurrently -n backend,frontend, -c green,cyan \"npm run dev:backend\" \"npm run dev:frontend\" "

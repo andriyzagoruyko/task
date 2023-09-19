@@ -5,7 +5,6 @@ import {
   CardMedia,
   Chip,
   LinearProgress,
-  PropTypes,
   Typography,
 } from "@material-ui/core";
 import { Stack } from "@mui/material";
@@ -15,15 +14,15 @@ import { createUseStyles } from "react-jss";
 export interface AssetEntityInterface {
   id: number;
   name: string;
-  status: FileStatusEnum;
   url: string;
   size: number;
-  text: string | null;
-  error: string | null;
   createdAt: string;
   type: FileTypeEnum;
   task?: {
     progress: number;
+    status: FileStatusEnum;
+    result: string;
+    error: string;
   };
 }
 
@@ -52,11 +51,8 @@ const PLACEHOLDER = "/placeholder.jpg";
 
 export const AssetCard: React.FC<AssetEntityInterface> = ({
   name,
-  status,
   url,
   size,
-  text,
-  error,
   type,
   task,
 }) => {
@@ -80,9 +76,9 @@ export const AssetCard: React.FC<AssetEntityInterface> = ({
                 {name}
               </Typography>
               <Chip
-                label={status}
+                label={task?.status}
                 size="small"
-                color={StatusColors[status] as any}
+                color={task?.status && (StatusColors[task.status] as any)}
               />
             </Stack>
             <Stack
@@ -113,21 +109,22 @@ export const AssetCard: React.FC<AssetEntityInterface> = ({
           />
         </Box>
         <Typography component="p" className={styles.assetText} variant="body2">
-          {error ??
-            text ??
+          {task?.error ??
+            task?.result ??
             "There is no saved text at the moment. Probably the asset is in processing or the asset has no text"}
         </Typography>
       </Stack>
-      {[FileStatusEnum.DOWNLOADING, FileStatusEnum.PENDING].includes(
-        status
-      ) && (
-        <LinearProgress
-          variant="determinate"
-          value={task?.progress}
-          color="primary"
-          style={{ zIndex: 1000 }}
-        />
-      )}
+      {task?.status &&
+        [FileStatusEnum.DOWNLOADING, FileStatusEnum.PENDING].includes(
+          task?.status
+        ) && (
+          <LinearProgress
+            variant="determinate"
+            value={task?.progress}
+            color="primary"
+            style={{ zIndex: 1000 }}
+          />
+        )}
     </Card>
   );
 };

@@ -3,7 +3,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { RABBITMQ_IMAGE_TOPIC } from '../../../definitions';
 import { QueueRoutesEnum } from '../enums/queue-routes.enum';
 import { EnqueueFileDto } from '../dto/enqueue-file.dto';
-import { FileService } from '../../../modules/file/file.service';
 import { FileStatusEnum } from '../../../modules/file/enums/file-status.enum';
 import { recognize } from 'tesseract.js';
 import { HttpService } from '../../../modules/http/http.service';
@@ -15,7 +14,6 @@ export class ImageProcessingConsumer {
   logger = new Logger(ImageProcessingConsumer.name);
 
   constructor(
-    private readonly fileService: FileService,
     private readonly httpService: HttpService,
     private readonly recognitionTaskService: RecognitionTaskService,
   ) {}
@@ -24,40 +22,40 @@ export class ImageProcessingConsumer {
     exchange: RABBITMQ_IMAGE_TOPIC,
     routingKey: QueueRoutesEnum.RECOGNIZE_IMAGE,
   })
-  async processImageEvent({ fileId }: EnqueueFileDto) {
-    const file = await this.fileService.findOne(fileId);
-    await this.fileService.updateFile(file.id, {
-      status: FileStatusEnum.DOWNLOADING,
-    });
-
+  async processImageEvent({ fileId, url, lang }: EnqueueFileDto) {
+    this.recognitionTaskService.create({ fileId });
     try {
-      this.logger.log(`Downloading file ${file.name}`);
+      this.logger.log(`Downloading file ${url}`);
       const handleDownloadProgress = _.throttle(async (progress: number) => {
-        file.task = await this.recognitionTaskService.updateOneByFileId(
-          fileId,
-          { progress },
-        );
+        await this.recognitionTaskService.updateOneByFileId(fileId, {
+          progress,
+        });
       }, 100);
+
       const image = await this.httpService.downloadFile(
-        file.url,
+        url,
         handleDownloadProgress,
       );
 
-      await this.fileService.updateFile(file.id, {
+      await this.recognitionTaskService.updateOneByFileId(fileId, {
         status: FileStatusEnum.PROCESSING,
       });
 
       this.logger.log(`Recognizing text`);
-      const text = await this.recognizeImageText(image, file.lang);
 
-      await this.fileService.updateFile(file.id, {
-        text,
+      const result = await this.recognizeImageText(image, lang);
+      await this.recognitionTaskService.updateOneByFileId(fileId, {
         status: FileStatusEnum.READY,
+        result,
       });
-      this.logger.log(`Text recognized successfully:\n${text}`);
+
+      this.logger.log(`Text recognized successfully:\n${result}`);
     } catch (e) {
       const error = String(e);
-      await this.fileService.updateFile(file.id, { error });
+      await this.recognitionTaskService.updateOneByFileId(fileId, {
+        status: FileStatusEnum.FAILED,
+        error,
+      });
       this.logger.error(`Exception occurred during processing image: ${error}`);
     }
   }

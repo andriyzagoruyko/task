@@ -3,9 +3,12 @@
 # ------------------------------------------------------
 
 type RecognitionTaskEntity {
+  id: ObjectID!
   fileId: Float!
   progress: Float!
-  id: ObjectID!
+  status: String!
+  error: String
+  result: String
 }
 
 """
@@ -15,14 +18,11 @@ scalar ObjectID
 
 type FileEntity {
   id: Int!
-  status: String!
   name: String!
   lang: String!
-  text: String
   url: String!
   type: String!
   size: Int
-  error: String
   createdAt: String!
   updatedAt: String!
   task: RecognitionTaskEntity

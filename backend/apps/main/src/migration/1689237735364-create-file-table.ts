@@ -20,12 +20,6 @@ export class CreateFileTable1689237735364 implements MigrationInterface {
             isNullable: false,
           },
           {
-            name: 'status',
-            type: 'varchar',
-            length: '255',
-            isNullable: false,
-          },
-          {
             name: 'url',
             type: 'varchar',
             length: '255',
@@ -43,21 +37,10 @@ export class CreateFileTable1689237735364 implements MigrationInterface {
             isNullable: true,
           },
           {
-            name: 'text',
-            type: 'text',
-            isNullable: true,
-          },
-          {
             name: 'lang',
             type: 'varchar',
             length: '30',
             isNullable: false,
-          },
-          {
-            name: 'error',
-            type: 'varchar',
-            length: '255',
-            isNullable: true,
           },
           {
             name: 'created_at',
