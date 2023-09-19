@@ -5,7 +5,7 @@ import { Model } from 'mongoose';
 import {
   GraphQLWebsocketEvents,
   EventPublisherService,
-} from 'src/modules/event-publisher/event-publisher.service';
+} from '../../event-publisher/event-publisher.service';
 
 @Injectable()
 export class RecognitionTaskService {

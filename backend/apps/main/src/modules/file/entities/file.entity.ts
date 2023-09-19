@@ -7,7 +7,7 @@ import {
 import { FileStatusEnum } from '../enums/file-status.enum';
 import { FileTypeEnum } from '../enums/file-type.enum';
 import { Field, ObjectType, Int } from '@nestjs/graphql';
-import { RecognitionTaskEntity } from 'src/modules/queue/entities/recognition-task.entity';
+import { RecognitionTaskEntity } from '../../../modules/queue/entities/recognition-task.entity';
 
 @Entity({ name: 'file' })
 @ObjectType()
@@ -17,7 +17,7 @@ export class FileEntity {
   id!: number;
 
   @Column({ type: 'varchar', length: 255 })
-  @Field()
+  @Field(() => String)
   status!: FileStatusEnum;
 
   @Column({ type: 'varchar', length: 255 })
@@ -37,7 +37,7 @@ export class FileEntity {
   url!: string;
 
   @Column({ type: 'varchar', length: 255 })
-  @Field()
+  @Field(() => String)
   type!: FileTypeEnum;
 
   @Column({ type: 'integer', nullable: true })

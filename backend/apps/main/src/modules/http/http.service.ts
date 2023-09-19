@@ -1,7 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import * as http from 'http';
 import * as https from 'https';
-import { SUPPORTED_AUDIO_TYPES, SUPPORTED_IMAGE_TYPES } from 'src/definitions';
+import {
+  SUPPORTED_AUDIO_TYPES,
+  SUPPORTED_IMAGE_TYPES,
+} from '../../definitions';
 import { FileTypeEnum } from '../file/enums/file-type.enum';
 
 @Injectable()

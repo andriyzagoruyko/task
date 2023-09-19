@@ -1,12 +1,12 @@
 import { RabbitSubscribe } from '@golevelup/nestjs-rabbitmq';
 import { Injectable, Logger } from '@nestjs/common';
-import { RABBITMQ_IMAGE_TOPIC } from 'src/definitions';
+import { RABBITMQ_IMAGE_TOPIC } from '../../../definitions';
 import { QueueRoutesEnum } from '../enums/queue-routes.enum';
 import { EnqueueFileDto } from '../dto/enqueue-file.dto';
-import { FileService } from 'src/modules/file/file.service';
-import { FileStatusEnum } from 'src/modules/file/enums/file-status.enum';
+import { FileService } from '../../../modules/file/file.service';
+import { FileStatusEnum } from '../../../modules/file/enums/file-status.enum';
 import { recognize } from 'tesseract.js';
-import { HttpService } from 'src/modules/http/http.service';
+import { HttpService } from '../../../modules/http/http.service';
 import { RecognitionTaskService } from '../services/recognition-task.service';
 import * as _ from 'lodash';
 

@@ -1,10 +1,10 @@
 import { Module, forwardRef } from '@nestjs/common';
-import { ConfigService } from 'src/config/config.service';
+import { ConfigService } from '../../config/config.service';
 import { QueueService } from './services/queue.service';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { ImageProcessingConsumer } from './consumers/image-processing.consumer';
 import { FileModule } from '../file/file.module';
-import { RABBITMQ_AUDIO_TOPIC, RABBITMQ_IMAGE_TOPIC } from 'src/definitions';
+import { RABBITMQ_AUDIO_TOPIC, RABBITMQ_IMAGE_TOPIC } from '../../definitions';
 import { AudioProcessingConsumer } from './consumers/audio-processing.consumer';
 import { HttpModule } from '../http/http.module';
 import { QueueResolver } from './queue.resolver';

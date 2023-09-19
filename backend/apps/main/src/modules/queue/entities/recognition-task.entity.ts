@@ -1,7 +1,7 @@
 import { ObjectType, Field, Float } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { GraphQLObjectID } from 'src/utils/graphQLObjectID';
+import { GraphQLObjectID } from '../../../utils/graphQLObjectID';
 
 export type FileTaskDocument = HydratedDocument<RecognitionTaskEntity>;
 

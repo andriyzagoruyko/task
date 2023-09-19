@@ -2,7 +2,10 @@ import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import { Injectable } from '@nestjs/common';
 import { EnqueueFileDto } from '../dto/enqueue-file.dto';
 import { QueueRoutesEnum } from '../enums/queue-routes.enum';
-import { RABBITMQ_AUDIO_TOPIC, RABBITMQ_IMAGE_TOPIC } from 'src/definitions';
+import {
+  RABBITMQ_AUDIO_TOPIC,
+  RABBITMQ_IMAGE_TOPIC,
+} from '../../../definitions';
 import { RecognitionTaskService } from './recognition-task.service';
 
 @Injectable()
