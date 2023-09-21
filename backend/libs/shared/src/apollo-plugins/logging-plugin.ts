@@ -16,7 +16,7 @@ export class LoggingPlugin implements ApolloServerPlugin {
   async requestDidStart(
     requestContext: GraphQLRequestContext,
   ): Promise<GraphQLRequestListener> {
-    const logger = console;
+    const logger = new Logger(LoggingPlugin.name);
     if (requestContext.request.operationName !== 'IntrospectionQuery') {
       logger.log(
         `request query: ${requestContext.request.query || 'undefined'}`,

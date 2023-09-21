@@ -4,9 +4,11 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "./index.css";
 import { ApolloProvider } from "@apollo/client";
-import { client } from "./apollo/client";
+import { apolloClient } from "./api/apollo/apollo-client";
 import { loadErrorMessages, loadDevMessages } from "@apollo/client/dev";
 import { __DEV__ } from "@apollo/client/utilities/globals";
+import { WebsocketProvider } from "./api/websocket/websocket-context";
+import { websocketClient } from "./api/websocket/websocket-client";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -14,9 +16,11 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <ApolloProvider client={client}>
-      <App />
-    </ApolloProvider>
+    <WebsocketProvider client={websocketClient}>
+      <ApolloProvider client={apolloClient}>
+        <App />
+      </ApolloProvider>
+    </WebsocketProvider>
   </React.StrictMode>
 );
 

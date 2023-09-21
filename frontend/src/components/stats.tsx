@@ -2,7 +2,7 @@ import { Paper } from "@material-ui/core";
 import { Alert, AlertTitle } from "@mui/material";
 import { createUseStyles } from "react-jss";
 import { useQuery } from "@apollo/client";
-import { STATS } from "../apollo/file";
+import { STATS } from "../api/apollo/requests/file";
 
 interface IStats {
   totalSize: number;

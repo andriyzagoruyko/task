@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { IRow } from "../rows";
 import { useMutation } from "@apollo/client";
-import { ALL_FILES, ENQUEUE_FILE } from "../../../apollo/file";
+import { ALL_FILES, ENQUEUE_FILE } from "../../../api/apollo/requests/file";
 import { AssetEntityInterface } from "../../assets/asset-card";
 
 const URL_REGEX =

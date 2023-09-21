@@ -53,22 +53,3 @@ export const TASK_UPDATED_SUBSCRIPTION = gql`
   }
 `;
 
-export const FILE_UPDATED_SUBSCRIPTION = gql`
-  subscription {
-    fileUpdated {
-      id
-      name
-      status
-      type
-      size
-      url
-      task {
-        id
-        progress
-        fileId
-        result
-        error
-      }
-    }
-  }
-`;

@@ -5,9 +5,10 @@ import { Stats } from "../stats";
 import { useQuery, useSubscription } from "@apollo/client";
 import {
   ALL_FILES,
-  FILE_UPDATED_SUBSCRIPTION,
   TASK_UPDATED_SUBSCRIPTION,
-} from "../../apollo/file";
+} from "../../api/apollo/requests/file";
+import { useWebsocketEvent } from "../../api/websocket/use-websocket-event";
+import { SocketEventsEnum } from "../../api/websocket/websocket-events-enum";
 
 export function Assets() {
   const styles = useStyles();
@@ -15,7 +16,10 @@ export function Assets() {
     ALL_FILES
   );
   useSubscription(TASK_UPDATED_SUBSCRIPTION);
-  //useSubscription(FILE_UPDATED_SUBSCRIPTION);
+  const assetUpdatedData = useWebsocketEvent(
+    SocketEventsEnum.RecognitionTaskUpdated
+  );
+  console.log("-----------------------------------", assetUpdatedData);
 
   if (loading) {
     return (

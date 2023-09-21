@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { Observable, Subject } from 'rxjs';
 
-export enum WebsocketEvents {
-  RecognitionTaskUpdate = 'RecognitionTaskUpdate',
+export enum WebsocketEventsEnum {
+  RecognitionTaskUpdated = 'RecognitionTaskUpdated',
 }
 
 @Injectable()
-export class WebsocketClientService {
+export class SocketClientService {
   private subject = new Subject<{ name: string; data: unknown }>();
   get eventSubject$(): Observable<{ name: string; data: unknown }> {
     return this.subject.asObservable();

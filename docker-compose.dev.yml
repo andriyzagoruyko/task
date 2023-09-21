@@ -42,7 +42,6 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.tags=modellab"
-      # - "traefik.docker.network=02aiseemodellabstaging_services"
 
       # backend
       - "traefik.http.routers.backend.rule=Host(`localhost`) && PathPrefix(`/api`)"
@@ -52,12 +51,21 @@ services:
       - "traefik.http.middlewares.backend-stripprefix.stripprefix.prefixes=/api"
       - "traefik.http.services.backend.loadbalancer.server.port=8080"
 
+      #websocket
+      - "traefik.http.routers.websocket.rule=Host(`localhost`) && PathPrefix(`/websocket`)"
+      - "traefik.http.routers.websocket.entrypoints=http"
+      - "traefik.http.routers.websocket.middlewares=websocket-stripprefix"
+      - "traefik.http.routers.websocket.service=websocket"
+      - "traefik.http.middlewares.websocket-stripprefix.stripprefix.prefixes=/websocket"
+      - "traefik.http.services.websocket.loadbalancer.server.port=8082"
+
       # hub_frontend
       - "traefik.http.routers.hub_frontend.rule=Host(`localhost`)"
       - "traefik.http.routers.hub_frontend.entrypoints=http"
       - "traefik.http.routers.hub_frontend.service=hub_frontend"
       - "traefik.http.services.hub_frontend.loadbalancer.server.port=3000"
-
+    environment:
+      NO_COLOR: 'true'
   backend-db:
     image: mysql:8.0.28-oracle
     hostname: backend-db

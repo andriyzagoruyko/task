@@ -1,17 +1,10 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
-import { split, HttpLink } from "@apollo/client";
-import { getMainDefinition } from "@apollo/client/utilities";
-import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
-import { createClient } from "graphql-ws";
+import { HttpLink } from "@apollo/client";
 
-const httpLink = new HttpLink({
-  uri: "http://localhost/api/graphql",
-});
+const httpLink = new HttpLink({ uri: "http://localhost/api/graphql" });
 
-const wsLink = new GraphQLWsLink(
-  createClient({
-    url: "ws://localhost:8082/subscriptions",
-  })
+/*const wsLink = new GraphQLWsLink(
+  createClient({ url: "ws://localhost:8082/subscriptions" })
 );
 
 // The split function takes three parameters:
@@ -29,10 +22,10 @@ const splitLink = split(
   },
   wsLink,
   httpLink
-);
+);*/
 
-export const client = new ApolloClient({
-  link: splitLink,
+export const apolloClient = new ApolloClient({
+  link: httpLink,
   cache: new InMemoryCache({
     typePolicies: {
       RecognitionTaskEntity: {
