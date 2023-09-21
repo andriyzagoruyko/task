@@ -1,19 +1,21 @@
-import { ObjectType, Field, Float } from '@nestjs/graphql';
+import { ObjectType, Field, Float, Directive, ID } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { TaskStatusEnum } from '../enums/task-status.enum';
-import { GraphQLObjectID } from '../../utils/graphQLObjectID';
+import { MongoID } from '../../../../../libs/shared/src/graphql-types/mongo-id';
 
 export type FileTaskDocument = HydratedDocument<RecognitionTaskEntity>;
 
 @Schema()
 @ObjectType()
+@Directive('@key(fields: "id")')
+@Directive('@key(fields: "fileId")')
 export class RecognitionTaskEntity {
-  @Field(() => GraphQLObjectID)
+  @Field(() => MongoID)
   id: string;
 
   @Prop({ required: true })
-  @Field(() => Float)
+  @Field(() => ID)
   fileId: number;
 
   @Prop({ required: true, default: 0 })

@@ -14,7 +14,7 @@ import { ConfigService } from '@app/shared/config/config.service';
         gateway: {
           supergraphSdl: new IntrospectAndCompose({
             subgraphs: [
-              //{ name: 'file', url: config.fileGraphQLUrl },
+              { name: 'file', url: config.fileGraphQLUrl },
               { name: 'queue', url: config.queueGraphQLUrl },
             ],
           }),

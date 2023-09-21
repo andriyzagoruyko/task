@@ -8,10 +8,6 @@ export const ALL_FILES = gql`
       type
       size
       url
-    }
-  }
-`;
-/*
       task {
         id
         progress
@@ -19,7 +15,10 @@ export const ALL_FILES = gql`
         status
         result
         error
-      }*/
+      }
+    }
+  }
+`;
 
 export const ENQUEUE_FILE = gql`
   mutation enqueueFile($url: String!, $lang: String!) {

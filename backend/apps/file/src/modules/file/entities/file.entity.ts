@@ -5,13 +5,14 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { FileTypeEnum } from '../enums/file-type.enum';
-import { Field, ObjectType, Int } from '@nestjs/graphql';
+import { Field, ObjectType, Int, ID, Directive } from '@nestjs/graphql';
 
 @Entity({ name: 'file' })
 @ObjectType()
+@Directive('@key(fields: "id")')
 export class FileEntity {
   @PrimaryGeneratedColumn('increment')
-  @Field(() => Int)
+  @Field(() => ID)
   id!: number;
 
   @Column({ type: 'varchar', length: 255 })

@@ -2,8 +2,8 @@ import { Kind, GraphQLError, GraphQLScalarType, ValueNode } from 'graphql';
 
 const MONGODB_OBJECTID_REGEX = new RegExp(/^[A-Fa-f0-9]{24}$/);
 
-export const GraphQLObjectID = new GraphQLScalarType({
-  name: 'ObjectID',
+export const MongoID = new GraphQLScalarType({
+  name: 'MongoID',
 
   description:
     'A field whose value conforms with the standard mongodb object ID as described here: https://docs.mongodb.com/manual/reference/method/ObjectId/#ObjectId. Example: 5e5677d71bdc2ae76344968c',

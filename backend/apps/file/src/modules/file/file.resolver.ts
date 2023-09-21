@@ -1,4 +1,11 @@
-import { Resolver, Query, Args, ID, Mutation } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Args,
+  ID,
+  Mutation,
+  ResolveReference,
+} from '@nestjs/graphql';
 import { FileService } from './file.service';
 import { FileEntity } from './entities/file.entity';
 import { EnqueueFileInput } from './inputs/enqueue-file.input';

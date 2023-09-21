@@ -21,7 +21,7 @@
     "dev:gateway": "npm run start:dev gateway",
     "dev:queue": "npm run start:dev queue",
     "dev:file": "npm run start:dev file",
-    "dev": "concurrently -n queue,gateway,queue -c green,cyan,red \"npm run dev:gateway\" \"npm run dev:file\" \"npm run dev:queue\""
+    "dev": "concurrently -n gateway,file,queue -c green,cyan,red \"npm run dev:gateway\" \"npm run dev:file\" \"npm run dev:queue\""
   },
   "dependencies": {
     "@apollo/gateway": "^2.5.5",

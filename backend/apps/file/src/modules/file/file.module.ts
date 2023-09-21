@@ -5,6 +5,7 @@ import { FileEntity } from './entities/file.entity';
 import { FileResolver } from './file.resolver';
 import { QueueClientModule } from '../queue-client/queue.module';
 import { HttpModule } from '../http/http.module';
+import { RecognitionTaskResolver } from './recognition-task.resolver';
 
 @Module({
   imports: [
@@ -12,7 +13,7 @@ import { HttpModule } from '../http/http.module';
     HttpModule,
     forwardRef(() => QueueClientModule),
   ],
-  providers: [FileService, FileResolver],
+  providers: [FileService, FileResolver, RecognitionTaskResolver],
   exports: [FileService],
 })
 export class FileModule {}

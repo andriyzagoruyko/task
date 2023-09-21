@@ -15,10 +15,12 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ConfigModule } from '@app/shared/config/config.module';
 import { ConfigService } from '@app/shared/config/config.service';
 import { MIGRATION_TABLE_NAME, ENTITIES_PATHS } from '@app/shared/definitions';
-import { join } from 'path';
+import { LoggingPlugin } from '@app/shared/apollo-plugins/logging-plugin';
+import { RecognitionTaskEntity } from './modules/file/entities/recognition-task.entity';
 
 @Module({
   imports: [
+    LoggingPlugin,
     QueueClientModule,
     FileModule,
     ConfigModule,
@@ -45,11 +47,10 @@ import { join } from 'path';
     }),
     GraphQLModule.forRoot<ApolloFederationDriverConfig>({
       driver: ApolloFederationDriver,
-      autoSchemaFile: {
-        federation: 2,
-        path: join(process.cwd(), 'src/file.gql'),
+      autoSchemaFile: { federation: 2 },
+      buildSchemaOptions: {
+        orphanedTypes: [RecognitionTaskEntity],
       },
-      playground: true,
     }),
     HttpModule,
   ],

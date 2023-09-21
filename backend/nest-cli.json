@@ -10,7 +10,7 @@
   "monorepo": true,
   "root": "apps/file",
   "projects": {
-    "test": {
+    "file": {
       "type": "application",
       "root": "apps/file",
       "entryFile": "main",
