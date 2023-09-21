@@ -90,7 +90,7 @@ export class FileService {
   async getStats(): Promise<{ totalSize: number; count: number }> {
     return {
       ...(await this.getTotalSizeForPastMonth()),
-      ...(await this.getAssetsCountForPastMonth()),
+      ...(await this.getFilesCountForPastMonth()),
     };
   }
 
@@ -102,7 +102,7 @@ export class FileService {
       .getRawOne();
   }
 
-  private async getAssetsCountForPastMonth() {
+  private async getFilesCountForPastMonth() {
     return await this.fileRepository
       .createQueryBuilder()
       .select('COUNT(id) as count')

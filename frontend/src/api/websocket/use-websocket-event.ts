@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import { WebsocketContext } from "./websocket-context";
-import { SocketEventsEnum } from "./websocket-events-enum";
+import { WebsocketEventsEnum } from "./websocket-events-enum";
 
 export const useWebsocketEvent = <TResponse = any>(
-  eventName: SocketEventsEnum
-) => {
+  eventName: WebsocketEventsEnum
+): { data: TResponse | undefined } => {
   const socket = useContext(WebsocketContext);
   const [data, setData] = useState<TResponse | undefined>();
 
@@ -15,5 +15,5 @@ export const useWebsocketEvent = <TResponse = any>(
     };
   }, [socket, eventName]);
 
-  return data;
+  return { data };
 };

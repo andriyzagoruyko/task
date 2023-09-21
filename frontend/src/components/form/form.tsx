@@ -11,13 +11,13 @@ export function Form() {
   const {
     rows,
     updateRow,
-    hasAddedAssets,
+    hasAddedFiles,
     addRow,
     deleteRow,
     errorMessage,
     cleanErrorMessage,
     loading,
-    createAssetsFromRows,
+    createFilesFromRows,
   } = useRows();
 
   const hasValidRows = rows.every((row) => row.isLinkValid && row.isLangValid);
@@ -28,7 +28,7 @@ export function Form() {
   const handleLangChange = (index: number, lang: string) =>
     updateRow(index, { ...rows[index], lang });
 
-  const handleSubmitClick = () => createAssetsFromRows();
+  const handleSubmitClick = () => createFilesFromRows();
 
   return (
     <>
@@ -74,7 +74,7 @@ export function Form() {
         onClose={cleanErrorMessage}
         message={errorMessage}
       />
-      {!!hasAddedAssets && (
+      {!!hasAddedFiles && (
         <Paper className={styles.successMessage}>
           <Alert severity="success">Successfully added asset</Alert>
         </Paper>

@@ -22,7 +22,7 @@ export function Stats() {
         Data processed for the past month —{" "}
         <strong>{bytesToMegabytes(data?.stats?.totalSize ?? 0)} MB</strong>{" "}
         <br />
-        Assets quantity for the past month —{" "}
+        Files quantity for the past month —{" "}
         <strong>{data?.stats?.count ?? 0} items</strong>
       </Alert>
     </Paper>

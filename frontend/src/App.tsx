@@ -1,7 +1,7 @@
 import { AppBar, Container, Toolbar, Typography } from "@material-ui/core";
 import { Form } from "./components/form/form";
-import { Assets } from "./components/assets/assets";
 import { createUseStyles } from "react-jss";
+import { Files } from "./components/files/files";
 
 const useStyles = createUseStyles({
   content: { marginTop: 128, marginBottom: 128 },
@@ -18,7 +18,7 @@ function App() {
       </AppBar>
       <Container className={styles.content}>
         <Form />
-        <Assets />
+        <Files />
       </Container>
     </>
   );

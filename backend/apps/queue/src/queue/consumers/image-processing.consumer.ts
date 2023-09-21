@@ -30,7 +30,7 @@ export class ImageProcessingConsumer {
         await this.recognitionTaskService.update(fileId, {
           progress,
         });
-      }, 100);
+      }, 200);
 
       const image = await this.httpService.downloadFile(
         url,

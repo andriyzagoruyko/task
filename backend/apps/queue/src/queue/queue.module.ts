@@ -18,6 +18,7 @@ import {
 } from '@app/shared/definitions';
 import { FileResolver } from './resolvers/file.resolver';
 import { RecognitionTaskResolver } from './resolvers/recognition-task.resolver';
+import { WebsocketModule } from '../socket/websocket.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { RecognitionTaskResolver } from './resolvers/recognition-task.resolver';
     MongooseModule.forFeature([
       { name: RecognitionTaskEntity.name, schema: RecognitionTaskSchema },
     ]),
+    WebsocketModule,
   ],
   providers: [
     ImageProcessingConsumer,

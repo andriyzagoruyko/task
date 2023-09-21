@@ -2,7 +2,7 @@ import { gql } from "@apollo/client";
 
 export const ALL_FILES = gql`
   query allFiles {
-    assets: allFiles {
+    files: allFiles {
       id
       name
       type
@@ -22,7 +22,7 @@ export const ALL_FILES = gql`
 
 export const ENQUEUE_FILE = gql`
   mutation enqueueFile($url: String!, $lang: String!) {
-    newAsset: enqueueFile(enqueueFileInput: { url: $url, lang: $lang }) {
+    newFile: enqueueFile(enqueueFileInput: { url: $url, lang: $lang }) {
       id
       name
       type
@@ -40,16 +40,3 @@ export const STATS = gql`
     }
   }
 `;
-
-export const TASK_UPDATED_SUBSCRIPTION = gql`
-  subscription {
-    taskUpdated {
-      id
-      fileId
-      progress
-      status
-      result
-    }
-  }
-`;
-

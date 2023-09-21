@@ -1,3 +1,3 @@
-export enum SocketEventsEnum {
+export enum WebsocketEventsEnum {
   RecognitionTaskUpdated = "RecognitionTaskUpdated",
 }

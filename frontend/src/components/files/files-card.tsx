@@ -10,34 +10,11 @@ import {
 import { Stack } from "@mui/material";
 import React from "react";
 import { createUseStyles } from "react-jss";
+import { FileEntityInterface } from "./interfaces/file-entity.interface";
+import { FileTypeEnum } from "./enums/file-type.enum";
+import { TaskStatusEnum } from "./enums/task-status.enum";
 
-export interface AssetEntityInterface {
-  id: number;
-  name: string;
-  url: string;
-  size: number;
-  createdAt: string;
-  type: FileTypeEnum;
-  task?: {
-    progress: number;
-    status: TaskStatusEnum;
-    result: string;
-    error: string;
-  };
-}
-
-export enum FileTypeEnum {
-  IMAGE = "image",
-  AUDIO = "audio",
-}
-
-export enum TaskStatusEnum {
-  PENDING = "pending",
-  DOWNLOADING = "downloading",
-  PROCESSING = "processing",
-  READY = "ready",
-  FAILED = "failed",
-}
+const PLACEHOLDER = "/placeholder.jpg";
 
 const StatusColors = {
   [TaskStatusEnum.PENDING]: "default",
@@ -47,9 +24,7 @@ const StatusColors = {
   [TaskStatusEnum.FAILED]: "secondary",
 };
 
-const PLACEHOLDER = "/placeholder.jpg";
-
-export const AssetCard: React.FC<AssetEntityInterface> = ({
+export const FileCard: React.FC<FileEntityInterface> = ({
   name,
   url,
   size,
@@ -100,7 +75,7 @@ export const AssetCard: React.FC<AssetEntityInterface> = ({
       <Stack
         direction={{ xs: "column", sm: "row" }}
         spacing={2}
-        className={styles.assetsBody}
+        className={styles.filesBody}
       >
         <Box className={styles.assetPreview}>
           <CardMedia
@@ -138,13 +113,13 @@ const useStyles = createUseStyles({
   assetText: {
     padding: "10px",
   },
-  assetsBody: {},
+  filesBody: {},
   "@media screen and (min-width: 0px)": {
-    assetsBody: {
+    filesBody: {
       alignItems: "center",
     },
     "@media screen and (min-width: 600px)": {
-      assetsBody: {
+      filesBody: {
         alignItems: "stretch",
       },
     },

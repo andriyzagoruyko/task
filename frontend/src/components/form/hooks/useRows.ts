@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { IRow } from "../rows";
 import { useMutation } from "@apollo/client";
 import { ALL_FILES, ENQUEUE_FILE } from "../../../api/apollo/requests/file";
-import { AssetEntityInterface } from "../../assets/asset-card";
+import { FileEntityInterface } from "../../files/interfaces/file-entity.interface";
 
 const URL_REGEX =
   /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gi;
@@ -17,17 +17,19 @@ export const EMPTY_ROW: IRow = {
 
 export const useRows = () => {
   const [rows, setRows] = useState<IRow[]>([EMPTY_ROW]);
-  const [hasAddedAssets, setHasAddedAssets] = useState(false);
+  const [hasAddedFiles, setHasAddedFiles] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [enqueueFile, { loading, error }] = useMutation(ENQUEUE_FILE, {
-    update: (cache, { data: { newAsset } }) => {
-      const { assets } = cache.readQuery({ query: ALL_FILES }) as {
-        assets: AssetEntityInterface[];
-      };
-      cache.writeQuery({
+    update: (cache, { data: { newFile } }) => {
+      const data = cache.readQuery<{ files: FileEntityInterface[] }>({
         query: ALL_FILES,
-        data: { assets: [newAsset, ...assets] },
       });
+      if (data) {
+        cache.writeQuery({
+          query: ALL_FILES,
+          data: { files: [newFile, ...data.files] },
+        });
+      }
     },
   });
 
@@ -51,23 +53,25 @@ export const useRows = () => {
 
   const addRow = () => {
     setRows([...rows, { ...EMPTY_ROW, lang: rows[rows.length - 1].lang }]);
-    setHasAddedAssets(false);
+    setHasAddedFiles(false);
   };
 
-  const createSingleAsset = async (row: IRow) => {
+  const createSingleFile = async (row: IRow) => {
     const { url, lang } = row;
     try {
       return await enqueueFile({ variables: { url, lang } });
-    } catch {}
+    } catch (e) {
+      console.error(e);
+    }
     return null;
   };
 
-  const createAssetsFromRows = async () => {
-    setHasAddedAssets(false);
+  const createFilesFromRows = async () => {
+    setHasAddedFiles(false);
     for (const row of rows) {
-      const res = await createSingleAsset(row);
+      const res = await createSingleFile(row);
       if (res) {
-        setHasAddedAssets(true);
+        setHasAddedFiles(true);
         setRows([EMPTY_ROW]);
       }
     }
@@ -91,12 +95,12 @@ export const useRows = () => {
     rows,
     setRows,
     updateRow,
-    hasAddedAssets,
-    setHasAddedAssets,
+    hasAddedFiles,
+    setHasAddedFiles,
     addRow,
     deleteRow,
-    createSingleAsset,
-    createAssetsFromRows,
+    createSingleFile,
+    createFilesFromRows,
     cleanErrorMessage,
     errorMessage,
     loading,
