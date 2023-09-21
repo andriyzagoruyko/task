@@ -1,6 +1,6 @@
 import { AppBar, Container, Toolbar, Typography } from "@material-ui/core";
-import { Form } from "./components/Form/Form";
-import { Assets } from "./components/Assets/Assets";
+import { Form } from "./components/form/form";
+import { Assets } from "./components/assets/assets";
 import { createUseStyles } from "react-jss";
 
 const useStyles = createUseStyles({

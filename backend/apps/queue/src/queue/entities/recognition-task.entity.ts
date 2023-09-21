@@ -8,7 +8,6 @@ export type FileTaskDocument = HydratedDocument<RecognitionTaskEntity>;
 
 @Schema()
 @ObjectType()
-@Directive('@key(fields: "id")')
 @Directive('@key(fields: "fileId")')
 export class RecognitionTaskEntity {
   @Field(() => MongoID)

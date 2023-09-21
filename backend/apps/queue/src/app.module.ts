@@ -9,6 +9,9 @@ import { ConfigService } from '@app/shared/config/config.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { QueueModule } from './queue/queue.module';
 import { FileEntity } from './queue/entities/file.entity';
+import { WebsocketGateway } from './websocket/websocket.gateway';
+import { WebsocketClientService } from './websocket/websocket-client.service';
+import { WebsocketModule } from './websocket/websocket.module';
 
 @Module({
   imports: [
@@ -34,6 +37,8 @@ import { FileEntity } from './queue/entities/file.entity';
         orphanedTypes: [FileEntity],
       },
     }),
+    WebsocketModule,
   ],
+  providers: [WebsocketGateway, WebsocketClientService],
 })
 export class AppModule {}

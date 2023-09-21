@@ -1,6 +1,6 @@
 import { Parent, ResolveField, Resolver } from '@nestjs/graphql';
-import { RecognitionTaskEntity } from './entities/recognition-task.entity';
-import { FileService } from './file.service';
+import { RecognitionTaskEntity } from '../entities/recognition-task.entity';
+import { FileService } from '../file.service';
 
 @Resolver(() => RecognitionTaskEntity)
 export class RecognitionTaskResolver {

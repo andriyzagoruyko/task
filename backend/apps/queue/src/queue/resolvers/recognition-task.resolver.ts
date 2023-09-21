@@ -1,7 +1,6 @@
-import { Args, ID, Int, Query, Resolver } from '@nestjs/graphql';
-
-import { RecognitionTaskEntity } from './entities/recognition-task.entity';
-import { RecognitionTaskService } from './services/recognition-task.service';
+import { Args, ID, Query, Resolver } from '@nestjs/graphql';
+import { RecognitionTaskEntity } from '../entities/recognition-task.entity';
+import { RecognitionTaskService } from '../services/recognition-task.service';
 
 @Resolver(() => RecognitionTaskEntity)
 export class RecognitionTaskResolver {

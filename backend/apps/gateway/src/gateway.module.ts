@@ -19,11 +19,9 @@ import { ConfigService } from '@app/shared/config/config.service';
             ],
           }),
         },
-        server: {},
       }),
       inject: [ConfigService],
     }),
   ],
-  providers: [],
 })
 export class GatewayModule {}

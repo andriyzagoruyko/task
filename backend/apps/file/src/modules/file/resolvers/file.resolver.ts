@@ -1,15 +1,8 @@
-import {
-  Resolver,
-  Query,
-  Args,
-  ID,
-  Mutation,
-  ResolveReference,
-} from '@nestjs/graphql';
-import { FileService } from './file.service';
-import { FileEntity } from './entities/file.entity';
-import { EnqueueFileInput } from './inputs/enqueue-file.input';
-import { StatsDto } from './dto/stats.dto';
+import { Resolver, Query, Args, ID, Mutation } from '@nestjs/graphql';
+import { FileService } from '../file.service';
+import { FileEntity } from '../entities/file.entity';
+import { EnqueueFileInput } from '../inputs/enqueue-file.input';
+import { StatsDto } from '../dto/stats.dto';
 
 @Resolver(() => FileEntity)
 export class FileResolver {

@@ -11,13 +11,13 @@ import {
   RecognitionTaskEntity,
   RecognitionTaskSchema,
 } from './entities/recognition-task.entity';
-import { RecognitionTaskResolver } from './recognition-task.resolver';
 import { RecognitionTaskService } from './services/recognition-task.service';
 import {
   RABBITMQ_IMAGE_TOPIC,
   RABBITMQ_AUDIO_TOPIC,
 } from '@app/shared/definitions';
-import { FileResolver } from './file.resolver';
+import { FileResolver } from './resolvers/file.resolver';
+import { RecognitionTaskResolver } from './resolvers/recognition-task.resolver';
 
 @Module({
   imports: [

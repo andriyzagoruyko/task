@@ -1,7 +1,7 @@
 import { Box, Typography } from "@material-ui/core";
 import { createUseStyles } from "react-jss";
-import { AssetCard, AssetEntityInterface } from "./AssetCard";
-import { Stats } from "../Stats";
+import { AssetCard, AssetEntityInterface } from "./asset-card";
+import { Stats } from "../stats";
 import { useQuery, useSubscription } from "@apollo/client";
 import {
   ALL_FILES,

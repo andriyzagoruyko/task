@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { IRow } from "../Rows";
+import { IRow } from "../rows";
 import { useMutation } from "@apollo/client";
 import { ALL_FILES, ENQUEUE_FILE } from "../../../apollo/file";
-import { AssetEntityInterface } from "../../Assets/AssetCard";
+import { AssetEntityInterface } from "../../assets/asset-card";
 
 const URL_REGEX =
   /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gi;

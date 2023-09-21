@@ -1,7 +1,7 @@
 import { Box, Button, Paper, Tooltip, Typography } from "@material-ui/core";
 import { createUseStyles } from "react-jss";
 import Stack from "@mui/material/Stack";
-import { Rows } from "./Rows";
+import { Rows } from "./rows";
 import Snackbar from "@mui/material/Snackbar";
 import { Alert } from "@mui/material";
 import { useRows } from "./hooks/useRows";
