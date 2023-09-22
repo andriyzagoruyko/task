@@ -13,11 +13,11 @@ export class HttpService {
       const client = url.startsWith('https://') ? https : http;
       const req = client.get(url, { timeout: this.REQUEST_TIMEOUT }, (res) => {
         const data = [];
+        const totalBytes = Number(res.headers['content-length'] || 0);
+        let receivedBytes = 0;
 
         res.on('readable', function () {
-          const totalBytes = Number(res.headers['content-length'] || 0);
           const chunk = this.read();
-          let receivedBytes = 0;
           if (chunk) {
             receivedBytes += Buffer.byteLength(chunk);
 

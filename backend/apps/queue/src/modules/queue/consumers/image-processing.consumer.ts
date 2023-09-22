@@ -27,9 +27,9 @@ export class ImageProcessingConsumer {
     try {
       this.logger.log(`Downloading file ${url}`);
       const handleDownloadProgress = _.throttle(async (progress: number) => {
-        await this.recognitionTaskService.update(fileId, {
-          progress,
-        });
+        try {
+          await this.recognitionTaskService.update(fileId, { progress });
+        } catch {}
       }, 200);
 
       const image = await this.httpService.downloadFile(
