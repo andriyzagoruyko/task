@@ -64,8 +64,7 @@ services:
       - "traefik.http.routers.hub_frontend.entrypoints=http"
       - "traefik.http.routers.hub_frontend.service=hub_frontend"
       - "traefik.http.services.hub_frontend.loadbalancer.server.port=3000"
-    environment:
-      NO_COLOR: 'true'
+
   backend-db:
     image: mysql:8.0.28-oracle
     hostname: backend-db

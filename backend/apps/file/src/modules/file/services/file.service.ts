@@ -29,8 +29,12 @@ export class FileService {
       .getMany();
   }
 
-  findOne(id: number) {
-    return this.fileRepository.findOneByOrFail({ id });
+  async findOne(id: number) {
+    const res = await this.fileRepository.findOneBy({ id });
+    if (!res) {
+      throw new NotFoundException('File not found');
+    }
+    return res;
   }
 
   async updateFile(id: number, fileData: DeepPartial<FileEntity>) {
@@ -86,6 +90,4 @@ export class FileService {
 
     return file;
   }
-
-
 }

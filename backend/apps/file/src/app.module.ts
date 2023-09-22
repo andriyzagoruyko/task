@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { HttpException, HttpStatus, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import migrations from './migration';
@@ -15,12 +15,13 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ConfigModule } from '@app/shared/config/config.module';
 import { ConfigService } from '@app/shared/config/config.service';
 import { MIGRATION_TABLE_NAME, ENTITIES_PATHS } from '@app/shared/definitions';
-import { LoggingPlugin } from '@app/shared/apollo-plugins/logging-plugin';
 import { RecognitionTaskEntity } from './modules/file/entities/recognition-task.entity';
+import { HttpExceptionsFilter } from '@app/shared/lib/http-exceptions.filter';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { LoggingInterceptor } from '@app/shared/lib/logging-interceptor';
 
 @Module({
   imports: [
-    LoggingPlugin,
     QueueClientModule,
     FileModule,
     ConfigModule,
@@ -48,11 +49,28 @@ import { RecognitionTaskEntity } from './modules/file/entities/recognition-task.
     GraphQLModule.forRoot<ApolloFederationDriverConfig>({
       driver: ApolloFederationDriver,
       autoSchemaFile: { federation: 2 },
-      buildSchemaOptions: {
-        orphanedTypes: [RecognitionTaskEntity],
+      buildSchemaOptions: { orphanedTypes: [RecognitionTaskEntity] },
+      formatError: (formattedError, error) => {
+        console.log(formattedError.extensions.stacktrace[1]);
+        return {
+          ...formattedError,
+          extensions: {
+            ...formattedError.extensions,
+            stacktrace: [],
+            code:
+              HttpStatus[
+                (formattedError.extensions.status as HttpStatus) ||
+                  HttpStatus.INTERNAL_SERVER_ERROR
+              ] || 'INTERNAL_SERVER_ERROR',
+          },
+        };
       },
     }),
     HttpModule,
+  ],
+  providers: [
+    { provide: APP_FILTER, useClass: HttpExceptionsFilter },
+    { provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
   ],
 })
 export class AppModule {}

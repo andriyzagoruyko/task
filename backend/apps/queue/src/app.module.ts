@@ -9,6 +9,9 @@ import { ConfigService } from '@app/shared/config/config.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { QueueModule } from './modules/queue/queue.module';
 import { FileEntity } from './modules/queue/entities/file.entity';
+import { HttpExceptionsFilter } from '@app/shared/lib/http-exceptions.filter';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { LoggingInterceptor } from '@app/shared/lib/logging-interceptor';
 
 @Module({
   imports: [
@@ -34,6 +37,10 @@ import { FileEntity } from './modules/queue/entities/file.entity';
         orphanedTypes: [FileEntity],
       },
     }),
+  ],
+  providers: [
+    { provide: APP_FILTER, useClass: HttpExceptionsFilter },
+    { provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
   ],
 })
 export class AppModule {}

@@ -18,9 +18,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./apps/file/test/jest-e2e.json",
-    "dev:gateway": "npm run start:dev gateway",
-    "dev:queue": "npm run start:dev queue",
-    "dev:file": "npm run start:dev file",
+    "dev:gateway": "NODE_OPTIONS=--enable-source-maps npm run start:dev gateway --debug",
+    "dev:queue": "NODE_OPTIONS=--enable-source-maps npm run start:dev queue --debug",
+    "dev:file": "NODE_OPTIONS=--enable-source-maps npm run start:dev file --debug",
     "dev": "concurrently -n gateway,file,queue -c green,cyan,red \"npm run dev:gateway\" \"npm run dev:file\" \"npm run dev:queue\""
   },
   "dependencies": {
