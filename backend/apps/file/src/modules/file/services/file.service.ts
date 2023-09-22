@@ -7,11 +7,11 @@ import {
 import { DeepPartial } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { HttpService } from '../http/http.service';
-import { EnqueueFileInput } from './inputs/enqueue-file.input';
-import { FileTypeEnum } from './enums/file-type.enum';
-import { QueueClientService } from '../queue-client/queue.service';
-import { FileEntity } from './entities/file.entity';
+import { HttpService } from '../../http/http.service';
+import { EnqueueFileInput } from '../inputs/enqueue-file.input';
+import { FileTypeEnum } from '../enums/file-type.enum';
+import { QueueClientService } from '../../queue-client/queue.service';
+import { FileEntity } from '../entities/file.entity';
 
 @Injectable()
 export class FileService {
@@ -87,26 +87,5 @@ export class FileService {
     return file;
   }
 
-  async getStats(): Promise<{ totalSize: number; count: number }> {
-    return {
-      ...(await this.getTotalSizeForPastMonth()),
-      ...(await this.getFilesCountForPastMonth()),
-    };
-  }
 
-  private async getTotalSizeForPastMonth() {
-    return await this.fileRepository
-      .createQueryBuilder()
-      .select('SUM(size) as totalSize')
-      .where('created_at > (NOW() - INTERVAL 1 MONTH)')
-      .getRawOne();
-  }
-
-  private async getFilesCountForPastMonth() {
-    return await this.fileRepository
-      .createQueryBuilder()
-      .select('COUNT(id) as count')
-      .where('created_at > (NOW() - INTERVAL 1 MONTH)')
-      .getRawOne();
-  }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { RecognitionTaskEntity } from '../entities/recognition-task.entity';
 import { Model } from 'mongoose';
@@ -20,7 +20,20 @@ export class RecognitionTaskService {
   }
 
   async findOne(id: number): Promise<RecognitionTaskEntity> {
-    return this.recognitionTaskModel.findOne({ _id: id }).exec();
+    const res = await this.recognitionTaskModel.findOne({ _id: id }).exec();
+    if (!res) {
+      throw new NotFoundException(`Recognition task ${id} not found`);
+    }
+    return res;
+  }
+  async findOneByFileId(fileId: number): Promise<RecognitionTaskEntity> {
+    const res = await this.recognitionTaskModel.findOne({ fileId }).exec();
+    if (!res) {
+      throw new NotFoundException(
+        `Recognition task with fileId ${fileId} not found`,
+      );
+    }
+    return res;
   }
 
   async create(
@@ -30,15 +43,19 @@ export class RecognitionTaskService {
     return await task.save();
   }
 
-  async findOneByFileId(fileId: number): Promise<RecognitionTaskEntity> {
-    return this.recognitionTaskModel.findOne({ fileId }).exec();
-  }
-
   async update(
     fileId: number,
     data: Partial<RecognitionTaskEntity>,
   ): Promise<RecognitionTaskEntity> {
-    await this.recognitionTaskModel.updateOne({ fileId }, data).exec();
+    const res = await this.recognitionTaskModel
+      .updateOne({ fileId }, data, { upsert: false })
+      .exec();
+
+    if (!res.modifiedCount) {
+      throw new NotFoundException(
+        `Recognition task with fileId ${fileId} not found`,
+      );
+    }
 
     const task = await this.findOneByFileId(fileId);
     this.websocketClientService.emit(

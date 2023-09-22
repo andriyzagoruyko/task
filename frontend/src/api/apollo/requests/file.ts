@@ -32,11 +32,3 @@ export const ENQUEUE_FILE = gql`
   }
 `;
 
-export const STATS = gql`
-  query getStats {
-    stats {
-      totalSize
-      count
-    }
-  }
-`;

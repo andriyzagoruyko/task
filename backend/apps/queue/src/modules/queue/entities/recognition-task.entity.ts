@@ -2,7 +2,7 @@ import { ObjectType, Field, Float, Directive, ID } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { TaskStatusEnum } from '../enums/task-status.enum';
-import { MongoID } from '../../../../../libs/shared/src/graphql-types/mongo-id';
+import { MongoID } from '../../../../../../libs/shared/src/graphql-types/mongo-id';
 
 export type FileTaskDocument = HydratedDocument<RecognitionTaskEntity>;
 

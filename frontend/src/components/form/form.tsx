@@ -4,31 +4,41 @@ import Stack from "@mui/material/Stack";
 import { Rows } from "./rows";
 import Snackbar from "@mui/material/Snackbar";
 import { Alert } from "@mui/material";
-import { useRows } from "./hooks/useRows";
+import { useRows } from "./hooks/useRowsForm";
+import { useMutation } from "@apollo/client";
+import { ENQUEUE_FILE, ALL_FILES } from "../../api/apollo/requests/file";
+import { FileEntityInterface } from "../files/interfaces/file-entity.interface";
 
 export function Form() {
   const styles = useStyles();
+  const [enqueueFile, { loading, error, data, reset }] = useMutation(
+    ENQUEUE_FILE,
+    {
+      update: (cache, { data: { newFile } }) => {
+        const data = cache.readQuery<{ files: FileEntityInterface[] }>({
+          query: ALL_FILES,
+        });
+        if (data) {
+          const files = [newFile, ...data.files];
+          cache.writeQuery({ query: ALL_FILES, data: { files } });
+        }
+      },
+    }
+  );
   const {
     rows,
-    updateRow,
-    hasAddedFiles,
+    hasValidRows,
     addRow,
     deleteRow,
-    errorMessage,
-    cleanErrorMessage,
-    loading,
-    createFilesFromRows,
-  } = useRows();
+    updateRowLink,
+    updateRowLang,
+    handleFormSubmit,
+  } = useRows((variables) => enqueueFile({ variables }));
 
-  const hasValidRows = rows.every((row) => row.isLinkValid && row.isLangValid);
-
-  const handleLinkChange = (index: number, fileLink: string) =>
-    updateRow(index, { ...rows[index], url: fileLink });
-
-  const handleLangChange = (index: number, lang: string) =>
-    updateRow(index, { ...rows[index], lang });
-
-  const handleSubmitClick = () => createFilesFromRows();
+  const handleAddRow = () => {
+    reset();
+    addRow();
+  };
 
   return (
     <>
@@ -36,19 +46,19 @@ export function Form() {
         <Typography variant="h4">Past your link</Typography>
         <Rows
           rows={rows}
-          onLangChange={handleLangChange}
-          onLinkChange={handleLinkChange}
+          onLangChange={updateRowLang}
+          onLinkChange={updateRowLink}
           onRowDelete={deleteRow}
         />
         <Stack direction="row" spacing={2} className={styles.buttonsContainer}>
-          <Button variant="contained" onClick={addRow}>
+          <Button variant="contained" onClick={handleAddRow}>
             Add more
           </Button>
           {hasValidRows ? (
             <Button
               variant="contained"
               color="primary"
-              onClick={handleSubmitClick}
+              onClick={handleFormSubmit}
               disabled={loading}
             >
               Send
@@ -69,14 +79,14 @@ export function Form() {
         </Stack>
       </Box>
       <Snackbar
-        open={!!errorMessage}
+        open={!!error}
         autoHideDuration={2000}
-        onClose={cleanErrorMessage}
-        message={errorMessage}
+        onClose={() => reset()}
+        message={error?.message}
       />
-      {!!hasAddedFiles && (
+      {!!data && (
         <Paper className={styles.successMessage}>
-          <Alert severity="success">Successfully added asset</Alert>
+          <Alert severity="success">Successfully added file</Alert>
         </Paper>
       )}
     </>

@@ -7,9 +7,8 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ConfigService } from '@app/shared/config/config.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { QueueModule } from './queue/queue.module';
-import { FileEntity } from './queue/entities/file.entity';
-import { WebsocketModule } from './socket/websocket.module';
+import { QueueModule } from './modules/queue/queue.module';
+import { FileEntity } from './modules/queue/entities/file.entity';
 
 @Module({
   imports: [

@@ -3,28 +3,22 @@ import { Stack, Autocomplete } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { createUseStyles } from "react-jss";
 import { AVAILABLE_LANGUAGES } from "../../definitions/available-languages";
+import { RowInterface } from "./interfaces/row.interface";
+import React from "react";
 
-export interface IRow {
-  url: string;
-  lang: string;
-  isLinkValid: boolean;
-  isLangValid: boolean;
-  isTouched: boolean;
-}
-
-interface IRowPros {
-  rows: IRow[];
+interface RowsPropsInterface {
+  rows: RowInterface[];
   onRowDelete: (index: number) => void;
   onLinkChange: (index: number, link: string) => void;
   onLangChange: (index: number, lang: string) => void;
 }
 
-export const Rows = ({
+export const Rows: React.FC<RowsPropsInterface> = ({
   rows,
   onRowDelete,
   onLangChange,
   onLinkChange,
-}: IRowPros) => {
+}) => {
   const styles = useStyles();
   return (
     <>
