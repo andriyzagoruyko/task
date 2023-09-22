@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom/client";
+import { render } from "react-dom";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "./index.css";
@@ -10,18 +10,16 @@ import { __DEV__ } from "@apollo/client/utilities/globals";
 import { WebsocketProvider } from "./api/websocket/websocket-context";
 import { websocketClient } from "./api/websocket/websocket-client";
 
-const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement
-);
-
-root.render(
+const rootElement = document.getElementById("root");
+render(
   <React.StrictMode>
     <WebsocketProvider client={websocketClient}>
       <ApolloProvider client={apolloClient}>
         <App />
       </ApolloProvider>
     </WebsocketProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
+  rootElement
 );
 
 // If you want to start measuring performance in your app, pass a function
