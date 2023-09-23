@@ -24,7 +24,7 @@ export class HttpService {
             const progress = (receivedBytes / totalBytes) * 100;
             onProgress?.(progress);
 
-            console.log('Downloading file...', progress);
+            //console.log('Downloading file...', progress);
             data.push(chunk);
           }
         });

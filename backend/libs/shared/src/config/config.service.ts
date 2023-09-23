@@ -6,10 +6,11 @@ import * as Joi from 'joi';
 expand(config());
 
 const CONFIG_SCHEMA = Joi.object({
-  gatewayHttpPort: Joi.number().integer().greater(0).required(),
-  fileHttpPort: Joi.number().integer().greater(0).required(),
+  gatewayGraphQLUrl: Joi.string().required(),
   fileGraphQLUrl: Joi.string().required(),
   queueGraphQLUrl: Joi.string().required(),
+  gatewayHttpPort: Joi.number().integer().greater(0).required(),
+  fileHttpPort: Joi.number().integer().greater(0).required(),
   queueHttpPort: Joi.number().integer().greater(0).required(),
 
   fileDatabase: Joi.object().keys({
@@ -44,9 +45,10 @@ export class ConfigService {
   fileHttpPort = Number(process.env.APP_FILE_HTTP_PORT) || 8081;
   queueHttpPort = Number(process.env.APP_QUEUE_HTTP_PORT) || 8082;
 
+  gatewayGraphQLUrl =
+    process.env.APP_GATEWAY_GRAPHQL_URL || 'http://localhost:8080/graphql';
   fileGraphQLUrl =
     process.env.APP_FILE_GRAPHQL_URL || 'http://localhost:8081/graphql';
-
   queueGraphQLUrl =
     process.env.APP_QUEUE_GRAPHQL_URL || 'http://localhost:8082/graphql';
 

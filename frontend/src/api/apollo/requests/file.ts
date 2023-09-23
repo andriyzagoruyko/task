@@ -2,7 +2,7 @@ import { gql } from "@apollo/client";
 
 export const ALL_FILES = gql`
   query allFiles {
-    files: allFiles {
+    allFiles {
       id
       name
       type
@@ -31,4 +31,3 @@ export const ENQUEUE_FILE = gql`
     }
   }
 `;
-
