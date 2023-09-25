@@ -1,0 +1,20 @@
+query GetFiles {
+  files {
+    id
+    name
+    type
+    size
+    url
+    lang
+    createdAt
+    updatedAt
+    task {
+      id
+      progress
+      fileId
+      status
+      result
+      error
+    }
+  }
+}

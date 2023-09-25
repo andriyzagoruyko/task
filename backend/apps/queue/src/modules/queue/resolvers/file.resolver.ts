@@ -9,7 +9,7 @@ export class FileResolver {
     private readonly recognitionTaskService: RecognitionTaskService,
   ) {}
 
-  @ResolveField(() => RecognitionTaskEntity)
+  @ResolveField(() => RecognitionTaskEntity, { nullable: true })
   task(@Parent() file: FileEntity) {
     return this.recognitionTaskService.findOneByFileId(file.id);
   }

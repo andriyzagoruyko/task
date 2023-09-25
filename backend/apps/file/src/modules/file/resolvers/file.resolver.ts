@@ -8,7 +8,7 @@ export class FileResolver {
   constructor(private readonly fileService: FileService) {}
 
   @Query(() => [FileEntity])
-  allFiles() {
+  files() {
     return this.fileService.findAll();
   }
 

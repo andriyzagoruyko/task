@@ -13,6 +13,7 @@ import { createUseStyles } from "react-jss";
 import { FileEntityInterface } from "./interfaces/file-entity.interface";
 import { FileTypeEnum } from "./enums/file-type.enum";
 import { TaskStatusEnum } from "./enums/task-status.enum";
+import { FileEntity } from "../../generated";
 
 const PLACEHOLDER = "/placeholder.jpg";
 
@@ -24,7 +25,7 @@ const StatusColors = {
   [TaskStatusEnum.FAILED]: "secondary",
 };
 
-export const FileCard: React.FC<FileEntityInterface> = ({
+export const FileCard: React.FC<FileEntity> = ({
   name,
   url,
   size,
@@ -53,7 +54,10 @@ export const FileCard: React.FC<FileEntityInterface> = ({
               <Chip
                 label={task?.status}
                 size="small"
-                color={task?.status && (StatusColors[task.status] as any)}
+                color={
+                  task?.status &&
+                  (StatusColors[task.status as TaskStatusEnum] as any)
+                }
               />
             </Stack>
             <Stack
@@ -65,9 +69,11 @@ export const FileCard: React.FC<FileEntityInterface> = ({
               <Typography variant="caption" component="div">
                 Type: {type}
               </Typography>
-              <Typography variant="caption" component="div">
-                {size / 1000} kB
-              </Typography>
+              {size && (
+                <Typography variant="caption" component="div">
+                  {size / 1000} kB
+                </Typography>
+              )}
             </Stack>
           </Stack>
         </CardContent>
@@ -91,7 +97,7 @@ export const FileCard: React.FC<FileEntityInterface> = ({
       </Stack>
       {task?.status &&
         [TaskStatusEnum.DOWNLOADING, TaskStatusEnum.PENDING].includes(
-          task?.status
+          task?.status as TaskStatusEnum
         ) && (
           <LinearProgress
             variant="determinate"

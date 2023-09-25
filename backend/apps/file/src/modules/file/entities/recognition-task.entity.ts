@@ -8,6 +8,6 @@ export class RecognitionTaskEntity {
   @Directive('@external')
   fileId: number;
 
-  @Field(() => FileEntity)
+  @Field(() => FileEntity, { nullable: true })
   file: FileEntity;
 }

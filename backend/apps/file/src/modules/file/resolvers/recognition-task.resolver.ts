@@ -6,7 +6,7 @@ import { FileService } from '../services/file.service';
 export class RecognitionTaskResolver {
   constructor(private readonly fileService: FileService) {}
 
-  @ResolveField(() => File)
+  @ResolveField(() => File, { nullable: true })
   file(@Parent() task: RecognitionTaskEntity) {
     return this.fileService.findOne(task.fileId);
   }

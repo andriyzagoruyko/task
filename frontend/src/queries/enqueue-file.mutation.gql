@@ -1,0 +1,10 @@
+mutation EnqueueFile($url: String!, $lang: String!) {
+  file: enqueueFile(enqueueFileInput: { url: $url, lang: $lang }) {
+    id
+    name
+    type
+    size
+    url
+  }
+}
+

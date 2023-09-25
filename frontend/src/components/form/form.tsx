@@ -5,22 +5,24 @@ import { Rows } from "./rows";
 import Snackbar from "@mui/material/Snackbar";
 import { Alert } from "@mui/material";
 import { useRows } from "./hooks/useRowsForm";
-import { useMutation } from "@apollo/client";
-import { ENQUEUE_FILE, ALL_FILES } from "../../api/apollo/requests/file";
-import { FileEntityInterface } from "../files/interfaces/file-entity.interface";
+import {
+  EnqueueFileDocument,
+  GetFilesDocument,
+  GetFilesQuery,
+  useEnqueueFileMutation,
+} from "../../generated";
 
 export function Form() {
   const styles = useStyles();
-  const [enqueueFile, { loading, error, data, reset }] = useMutation(
-    ENQUEUE_FILE,
+  const [enqueueFile, { loading, error, data, reset }] = useEnqueueFileMutation(
     {
-      update: (cache, { data: { newFile } }) => {
-        const data = cache.readQuery<{ files: FileEntityInterface[] }>({
-          query: ALL_FILES,
+      update: (cache, { data }) => {
+        const filesList = cache.readQuery<GetFilesQuery>({
+          query: GetFilesDocument,
         });
-        if (data) {
-          const files = [newFile, ...data.files];
-          cache.writeQuery({ query: ALL_FILES, data: { files } });
+        if (data && filesList) {
+          const files = [data.file, ...filesList.files];
+          cache.writeQuery({ query: EnqueueFileDocument, data: { files } });
         }
       },
     }

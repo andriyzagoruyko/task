@@ -1,9 +1,11 @@
+require("dotenv/config");
+
 module.exports = {
   client: {
     service: {
-      name: "my-graphql-app",
-      url:
-        process.env.APP_GATEWAY_GRAPHQL_URL || "http://localhost:8080/graphql",
+      name: "task",
+      url: "http://localhost:8080/graphql",
     },
+    excludes: ["src/generated/**/*"],
   },
 };

@@ -1,19 +1,13 @@
 import { Paper } from "@material-ui/core";
 import { Alert, AlertTitle } from "@mui/material";
 import { createUseStyles } from "react-jss";
-import { useQuery } from "@apollo/client";
-import stats from "../api/apollo/requests/stats.gql";
-
-interface StatsInterface {
-  totalSize: number;
-  count: number;
-}
+import { useGetStatsQuery } from "../generated";
 
 const bytesToMegabytes = (bytes: number) => (bytes / 1000000).toFixed(3);
 
 export function Stats() {
   const styles = useStyles();
-  const { data } = useQuery<{ stats: StatsInterface }>(stats);
+  const { data } = useGetStatsQuery();
 
   return (
     <Paper className={styles.wrapper}>
