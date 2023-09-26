@@ -1,7 +1,7 @@
 {
   "global": {
     "bg-button": {
-      "value": "#2256cd",
+      "value": "#009ed1",
       "type": "color"
     },
     "color-button": {
